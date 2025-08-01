@@ -114,11 +114,26 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Manage admin panel users and their permissions
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: string;
+  name: string;
+  /**
+   * Admin: Full system access, Event Manager: Manage events and attendees (can create content managers), Content Manager: Manage content of website (cannot create users)
+   */
+  roles: ('admin' | 'event-manager' | 'content-manager' | 'user')[];
+  /**
+   * Suspended users cannot log in to the admin panel
+   */
+  status?: ('active' | 'suspended') | null;
+  /**
+   * Last successful login to admin panel
+   */
+  lastLogin?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -218,6 +233,10 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  roles?: T;
+  status?: T;
+  lastLogin?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
