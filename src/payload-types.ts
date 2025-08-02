@@ -67,16 +67,22 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    speakers: Speaker;
+    'speaker-types': SpeakerType;
     users: User;
     media: Media;
+    documents: Document;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
+    speakers: SpeakersSelect<false> | SpeakersSelect<true>;
+    'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    documents: DocumentsSelect<false> | DocumentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -112,6 +118,165 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "speakers".
+ */
+export interface Speaker {
+  id: string;
+  /**
+   * Upload image of the speaker
+   */
+  profile_image: string | Media;
+  name: string;
+  designation: string;
+  linkedin_url?: string | null;
+  location: {
+    city: string;
+    country: string;
+  };
+  summary?: string | null;
+  experience?:
+    | {
+        organization_name: string;
+        designation: string;
+        currently_work_here?: boolean | null;
+        from_date: string;
+        to_date?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * URL to uploaded flight details document
+   */
+  flight_details: string;
+  hotel: string;
+  room_number: string;
+  stay_duration: string;
+  /**
+   * Special requirements, preferences, etc.
+   */
+  accommodation_details: string;
+  status?: ('confirmed' | 'pending' | 'cancelled' | 'completed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  /**
+   * Alternative text for accessibility and SEO
+   */
+  alt: string;
+  /**
+   * What type of media is this?
+   */
+  mediaType:
+    | 'speaker_photos'
+    | 'event_images'
+    | 'event_videos'
+    | 'marketing_assets'
+    | 'venue_photos'
+    | 'presentation_media'
+    | 'branding'
+    | 'social_media'
+    | 'press_media'
+    | 'other';
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * Manage speaker type categories (Domestic, International, etc.)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "speaker-types".
+ */
+export interface SpeakerType {
+  id: string;
+  /**
+   * Unique name for the speaker type (e.g., Domestic, International)
+   */
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  /**
+   * Optional description of this speaker type
+   */
+  description?: string | null;
+  /**
+   * Enable to include this item in lists, filters, or dropdowns.
+   */
+  isActive?: boolean | null;
+  /**
+   * Order in which this appears in dropdowns (lower = first)
+   */
+  sortOrder?: number | null;
+  /**
+   * Whether speakers of this type typically need visa documents
+   */
+  requiresVisa?: boolean | null;
+  /**
+   * Default accommodation level for this speaker type
+   */
+  defaultAccommodation?: ('standard_hotel' | 'premium_hotel' | 'corporate_housing' | 'none') | null;
+  /**
+   * Typical budget range for speakers of this type
+   */
+  averageBudget?: {
+    min?: number | null;
+    max?: number | null;
+    currency?: ('INR' | 'USD' | 'EUR' | 'GBP') | null;
+  };
+  /**
+   * Documents typically required for this speaker type
+   */
+  requiredDocuments?:
+    | {
+        document:
+          | 'passport'
+          | 'visa'
+          | 'flight_itinerary'
+          | 'hotel_booking'
+          | 'speaker_agreement'
+          | 'tax_forms'
+          | 'photo_id'
+          | 'resume';
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Hex color code for UI display (e.g., #FF5722 for International)
+   */
+  color?: string | null;
+  /**
+   * Material UI icon name or emoji for display
+   */
+  icon?: string | null;
+  /**
+   * Number of speakers using this type (auto-calculated)
+   */
+  usageCount?: number | null;
+  /**
+   * Internal notes for administrators
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Manage admin panel users and their permissions
@@ -154,11 +319,27 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "documents".
  */
-export interface Media {
+export interface Document {
   id: string;
-  alt: string;
+  /**
+   * Give a short brief on what the document is about
+   */
+  title: string;
+  /**
+   * Categorize for better organization
+   */
+  category:
+    | 'flight_details'
+    | 'hotel_booking'
+    | 'visa_documents'
+    | 'speaker_contract'
+    | 'presentation_materials'
+    | 'invoice_receipt'
+    | 'id_documents'
+    | 'event_materials'
+    | 'other';
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -179,12 +360,24 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
+        relationTo: 'speakers';
+        value: string | Speaker;
+      } | null)
+    | ({
+        relationTo: 'speaker-types';
+        value: string | SpeakerType;
+      } | null)
+    | ({
         relationTo: 'users';
         value: string | User;
       } | null)
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'documents';
+        value: string | Document;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -230,6 +423,73 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "speakers_select".
+ */
+export interface SpeakersSelect<T extends boolean = true> {
+  profile_image?: T;
+  name?: T;
+  designation?: T;
+  linkedin_url?: T;
+  location?:
+    | T
+    | {
+        city?: T;
+        country?: T;
+      };
+  summary?: T;
+  experience?:
+    | T
+    | {
+        organization_name?: T;
+        designation?: T;
+        currently_work_here?: T;
+        from_date?: T;
+        to_date?: T;
+        id?: T;
+      };
+  flight_details?: T;
+  hotel?: T;
+  room_number?: T;
+  stay_duration?: T;
+  accommodation_details?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "speaker-types_select".
+ */
+export interface SpeakerTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  isActive?: T;
+  sortOrder?: T;
+  requiresVisa?: T;
+  defaultAccommodation?: T;
+  averageBudget?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+        currency?: T;
+      };
+  requiredDocuments?:
+    | T
+    | {
+        document?: T;
+        id?: T;
+      };
+  color?: T;
+  icon?: T;
+  usageCount?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -260,6 +520,26 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  mediaType?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents_select".
+ */
+export interface DocumentsSelect<T extends boolean = true> {
+  title?: T;
+  category?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

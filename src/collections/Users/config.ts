@@ -6,8 +6,13 @@ import { user } from './access/user'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    singular: 'Admin Panel User',
+    plural: 'Admin Panel Users',
+  },
   admin: {
     useAsTitle: 'email',
+    group: 'User Management',
     defaultColumns: ['name', 'email', 'roles', 'status', 'lastLogin'],
     description: 'Manage admin panel users and their permissions',
   },
