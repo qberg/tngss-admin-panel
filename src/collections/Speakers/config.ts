@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 import { eventManager, eventManagerFieldAccess } from '../Users/access/eventManager'
 import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
+import { durationField } from '@/fields/duration'
+import { expertiseField } from '@/fields/options/expertise'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -27,6 +29,7 @@ export const Speakers: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Speaker Management',
+    defaultColumns: ['name', 'designation', 'assigned_coordinator', 'status'],
   },
   access: {
     create: eventManager,
@@ -49,7 +52,6 @@ export const Speakers: CollectionConfig = {
           label: 'Profile Image',
           type: 'upload',
           relationTo: 'media',
-          required: true,
           access: publicFieldAccess,
           admin: {
             description: 'Upload image of the speaker',
@@ -75,6 +77,21 @@ export const Speakers: CollectionConfig = {
               admin: {
                 width: '50%',
               },
+            },
+            {
+              name: 'organization',
+              type: 'text',
+              required: true,
+              access: publicFieldAccess,
+              admin: {
+                width: '50%',
+              },
+            },
+            {
+              name: 'speaker_type',
+              type: 'relationship',
+              relationTo: 'speaker-types',
+              required: true,
             },
           ],
         },
@@ -102,16 +119,19 @@ export const Speakers: CollectionConfig = {
           type: 'group',
           fields: [
             {
-              name: 'city',
-              label: 'City',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'country',
-              label: 'Country',
-              type: 'text',
-              required: true,
+              type: 'row',
+              fields: [
+                {
+                  name: 'city',
+                  label: 'City',
+                  type: 'text',
+                },
+                {
+                  name: 'country',
+                  label: 'Country',
+                  type: 'text',
+                },
+              ],
             },
           ],
           access: publicFieldAccess,
@@ -186,6 +206,46 @@ export const Speakers: CollectionConfig = {
             },
           ],
         },
+
+        {
+          name: 'education',
+          type: 'array',
+          label: 'Education',
+          access: publicFieldAccess,
+          fields: [
+            {
+              name: 'degree',
+              type: 'text',
+              label: 'Degree',
+            },
+            {
+              name: 'college',
+              type: 'text',
+              label: 'College',
+            },
+          ],
+        },
+
+        {
+          name: 'languages',
+          type: 'array',
+          access: publicFieldAccess,
+          label: 'Languages Known',
+          fields: [
+            {
+              name: 'lang',
+              type: 'text',
+            },
+          ],
+        },
+
+        expertiseField,
+        {
+          name: 'bio',
+          type: 'textarea',
+          access: publicFieldAccess,
+          label: 'Detailed Bio',
+        },
       ],
     },
 
@@ -198,15 +258,70 @@ export const Speakers: CollectionConfig = {
       },
       fields: [
         {
-          name: 'flight_details',
-          label: 'Flight Details (File URL)',
-          type: 'text',
-          required: true,
+          name: 'travel_details',
+          label: 'Travel Files',
           access: travelFieldAcess,
+          type: 'array',
+
           admin: {
-            description: 'URL to uploaded flight details document',
-            placeholder: 'https://cdn.example.com/documents/flight-details.pdf',
+            description: 'Upload flight details - add as many documents or images as needed',
+            initCollapsed: false,
+            isSortable: true,
           },
+          fields: [
+            {
+              name: 'file_type',
+              label: 'File Type',
+              type: 'radio',
+              defaultValue: 'document',
+              options: [
+                {
+                  label: 'Document (PDF)',
+                  value: 'document',
+                },
+                {
+                  label: 'Image/Media',
+                  value: 'media',
+                },
+              ],
+            },
+
+            {
+              name: 'document',
+              type: 'upload',
+              label: 'Document File',
+              relationTo: 'documents',
+              admin: {
+                condition: (_, siblingData) => {
+                  return siblingData?.file_type === 'document'
+                },
+                description: 'Upload PDF document',
+              },
+            },
+
+            {
+              name: 'media',
+              type: 'upload',
+              label: 'Image/Media File',
+              required: true,
+              relationTo: 'media',
+              admin: {
+                condition: (_, siblingData) => {
+                  return siblingData?.file_type === 'media'
+                },
+                description: 'Upload image file (JPG, PNG, etc.)',
+              },
+            },
+            {
+              name: 'description',
+              label: 'Description',
+              type: 'text',
+              admin: {
+                placeholder: 'e.g., Outbound flight, Return flight, Boarding pass, etc.',
+                description: 'Optional description for this file',
+              },
+            },
+          ],
         },
         {
           type: 'row',
@@ -215,7 +330,6 @@ export const Speakers: CollectionConfig = {
               name: 'hotel',
               label: 'Hotel Name',
               type: 'text',
-              required: true,
               access: travelFieldAcess,
               admin: {
                 width: '50%',
@@ -225,7 +339,6 @@ export const Speakers: CollectionConfig = {
               name: 'room_number',
               label: 'Room Number',
               type: 'text',
-              required: true,
               access: travelFieldAcess,
               admin: {
                 width: '50%',
@@ -237,21 +350,18 @@ export const Speakers: CollectionConfig = {
           type: 'row',
           fields: [
             {
-              name: 'stay_duration',
-              label: 'Stay Duration',
+              name: 'assigned_coordinator',
               type: 'text',
-              required: true,
+              label: 'Assigned Coordinator',
               access: travelFieldAcess,
               admin: {
                 width: '50%',
-                placeholder: 'e.g., Aug 15-17, 2025 (3 nights)',
               },
             },
             {
               name: 'accommodation_details',
               label: 'Accommodation Details',
               type: 'textarea',
-              required: true,
               access: travelFieldAcess,
               admin: {
                 width: '50%',
@@ -261,6 +371,7 @@ export const Speakers: CollectionConfig = {
             },
           ],
         },
+        durationField,
       ],
     },
 
@@ -290,6 +401,18 @@ export const Speakers: CollectionConfig = {
           },
         },
       ],
+    },
+
+    {
+      name: 'sort_order',
+      type: 'number',
+      label: 'Display Priority Order',
+      access: publicFieldAccess,
+      defaultValue: 1,
+      admin: {
+        position: 'sidebar',
+        description: 'Lower numbers appear first (1 = highest)',
+      },
     },
   ],
 }

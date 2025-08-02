@@ -128,13 +128,15 @@ export interface Speaker {
   /**
    * Upload image of the speaker
    */
-  profile_image: string | Media;
+  profile_image?: (string | null) | Media;
   name: string;
   designation: string;
+  organization: string;
+  speaker_type: string | SpeakerType;
   linkedin_url?: string | null;
-  location: {
-    city: string;
-    country: string;
+  location?: {
+    city?: string | null;
+    country?: string | null;
   };
   summary?: string | null;
   experience?:
@@ -147,18 +149,71 @@ export interface Speaker {
         id?: string | null;
       }[]
     | null;
+  education?:
+    | {
+        degree?: string | null;
+        college?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  languages?:
+    | {
+        lang?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  expertise?:
+    | (
+        | 'ai_ml'
+        | 'data_science'
+        | 'web_development'
+        | 'mobile_development'
+        | 'cloud_computing'
+        | 'cybersecurity'
+        | 'devops'
+        | 'project_management'
+        | 'ui_ux_design'
+        | 'marketing'
+      )[]
+    | null;
+  bio?: string | null;
   /**
-   * URL to uploaded flight details document
+   * Upload flight details - add as many documents or images as needed
    */
-  flight_details: string;
-  hotel: string;
-  room_number: string;
-  stay_duration: string;
+  travel_details?:
+    | {
+        file_type?: ('document' | 'media') | null;
+        /**
+         * Upload PDF document
+         */
+        document?: (string | null) | Document;
+        /**
+         * Upload image file (JPG, PNG, etc.)
+         */
+        media?: (string | null) | Media;
+        /**
+         * Optional description for this file
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  hotel?: string | null;
+  room_number?: string | null;
+  assigned_coordinator?: string | null;
   /**
    * Special requirements, preferences, etc.
    */
-  accommodation_details: string;
+  accommodation_details?: string | null;
+  duration?: {
+    from_date?: string | null;
+    to_date?: string | null;
+  };
   status?: ('confirmed' | 'pending' | 'cancelled' | 'completed') | null;
+  /**
+   * Lower numbers appear first (1 = highest)
+   */
+  sort_order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -279,6 +334,41 @@ export interface SpeakerType {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: string;
+  /**
+   * Give a short brief on what the document is about
+   */
+  title: string;
+  /**
+   * Categorize for better organization
+   */
+  category:
+    | 'flight_details'
+    | 'hotel_booking'
+    | 'visa_documents'
+    | 'speaker_contract'
+    | 'presentation_materials'
+    | 'invoice_receipt'
+    | 'id_documents'
+    | 'event_materials'
+    | 'other';
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * Manage admin panel users and their permissions
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -316,41 +406,6 @@ export interface User {
       }[]
     | null;
   password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents".
- */
-export interface Document {
-  id: string;
-  /**
-   * Give a short brief on what the document is about
-   */
-  title: string;
-  /**
-   * Categorize for better organization
-   */
-  category:
-    | 'flight_details'
-    | 'hotel_booking'
-    | 'visa_documents'
-    | 'speaker_contract'
-    | 'presentation_materials'
-    | 'invoice_receipt'
-    | 'id_documents'
-    | 'event_materials'
-    | 'other';
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -429,6 +484,8 @@ export interface SpeakersSelect<T extends boolean = true> {
   profile_image?: T;
   name?: T;
   designation?: T;
+  organization?: T;
+  speaker_type?: T;
   linkedin_url?: T;
   location?:
     | T
@@ -447,12 +504,42 @@ export interface SpeakersSelect<T extends boolean = true> {
         to_date?: T;
         id?: T;
       };
-  flight_details?: T;
+  education?:
+    | T
+    | {
+        degree?: T;
+        college?: T;
+        id?: T;
+      };
+  languages?:
+    | T
+    | {
+        lang?: T;
+        id?: T;
+      };
+  expertise?: T;
+  bio?: T;
+  travel_details?:
+    | T
+    | {
+        file_type?: T;
+        document?: T;
+        media?: T;
+        description?: T;
+        id?: T;
+      };
   hotel?: T;
   room_number?: T;
-  stay_duration?: T;
+  assigned_coordinator?: T;
   accommodation_details?: T;
+  duration?:
+    | T
+    | {
+        from_date?: T;
+        to_date?: T;
+      };
   status?: T;
+  sort_order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
