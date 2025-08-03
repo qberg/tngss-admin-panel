@@ -15,8 +15,8 @@ interface DashboardClientProps {
 }
 
 const DashboardClient: React.FC<DashboardClientProps> = ({ initialStats, adminRoute }) => {
-  const [stats, setStats] = useState<CollectionStats | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<CollectionStats | null>(initialStats)
+  const [loading, setLoading] = useState(!initialStats)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const { user } = useAuth()

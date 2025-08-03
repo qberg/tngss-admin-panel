@@ -4,16 +4,11 @@ import { CollectionStats } from './types'
 import { fetchStatsWithLocalAPI } from './utils'
 import DashboardClient from './DashboardClient'
 
-const DashboardServer: React.FC<AdminViewServerProps> = async ({
-  initPageResult,
-  clientConfig,
-}) => {
+const DashboardServer: React.FC<AdminViewServerProps> = async ({ payload }) => {
   let stats: CollectionStats | null = null
   let error: string | null = null
 
-  console.log(clientConfig)
   try {
-    const payload = initPageResult.req.payload
     if (!payload) {
       throw new Error('Payload instance not available')
     }
@@ -24,7 +19,7 @@ const DashboardServer: React.FC<AdminViewServerProps> = async ({
     error = 'Failed to load collection statistics'
   }
 
-  const adminRoute = clientConfig?.routes?.admin || '/admin'
+  const adminRoute = '/admin'
 
   return <DashboardClient initialStats={stats} initialError={error} adminRoute={adminRoute} />
 }
