@@ -15,6 +15,10 @@
   --theme-elevation-200: color-mix(in srgb, var(--theme-green) 50%, transparent);
 }
 
+:root[data-theme='dark'] {
+  --theme-bg: #000000;
+}
+
 .card__title {
   color: var(--theme-orange);
 }

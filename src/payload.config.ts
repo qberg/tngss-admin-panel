@@ -36,6 +36,12 @@ export default buildConfig({
       },
 
       beforeDashboard: ['/components/admin/WelcomeMessage'],
+
+      views: {
+        dashboard: {
+          Component: '/components/admin/custom-dashboard/DashboardServer',
+        },
+      },
     },
   },
   collections: [Speakers, SpeakerTypes, Representatives, Users, Media, Documents],
