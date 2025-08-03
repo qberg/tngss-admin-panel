@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     speakers: Speaker;
     'speaker-types': SpeakerType;
+    representatives: Representative;
     users: User;
     media: Media;
     documents: Document;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsSelect: {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
     'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
+    representatives: RepresentativesSelect<false> | RepresentativesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
@@ -369,6 +371,20 @@ export interface Document {
   focalY?: number | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "representatives".
+ */
+export interface Representative {
+  id: string;
+  name: string;
+  designation?: string | null;
+  org_name?: string | null;
+  phone_number?: string | null;
+  email_id?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Manage admin panel users and their permissions
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -421,6 +437,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'speaker-types';
         value: string | SpeakerType;
+      } | null)
+    | ({
+        relationTo: 'representatives';
+        value: string | Representative;
       } | null)
     | ({
         relationTo: 'users';
@@ -572,6 +592,19 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
   icon?: T;
   usageCount?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "representatives_select".
+ */
+export interface RepresentativesSelect<T extends boolean = true> {
+  name?: T;
+  designation?: T;
+  org_name?: T;
+  phone_number?: T;
+  email_id?: T;
   updatedAt?: T;
   createdAt?: T;
 }

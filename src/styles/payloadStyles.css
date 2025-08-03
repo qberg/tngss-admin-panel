@@ -1,0 +1,24 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+/*@import 'tailwindcss/preflight.css' layer(base)*/
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* orange : #F5710C blue:  */
+:root {
+  --theme-orange: #f5710c;
+  --theme-blue: #0055ff;
+  --theme-green: #18bfdb;
+
+  --theme-elevation-100: var(--theme-green);
+  --theme-elevation-200: color-mix(in srgb, var(--theme-green) 50%, transparent);
+}
+
+.card__title {
+  color: var(--theme-orange);
+}
+
+h1 {
+  color: var(--theme-green);
+}

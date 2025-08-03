@@ -4,6 +4,7 @@ import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
 import { durationField } from '@/fields/duration'
 import { expertiseField } from '@/fields/options/expertise'
+import { bulkOperationsField } from '@/fields/bulkOperations'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -402,6 +403,8 @@ export const Speakers: CollectionConfig = {
         },
       ],
     },
+
+    bulkOperationsField,
 
     {
       name: 'sort_order',

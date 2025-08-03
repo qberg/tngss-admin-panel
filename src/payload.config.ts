@@ -13,6 +13,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import { Documents } from './collections/Documents/config'
 import { Speakers } from './collections/Speakers/config'
 import { SpeakerTypes } from './collections/SpeakerTypes/config'
+import { Representatives } from './collections/Representatives/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,11 +21,24 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
+    meta: {
+      titleSuffix: '- TNGSS Admin Panel',
+      description: 'TNGSS Event Management System Admin Panel',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Component overrides
+    components: {
+      graphics: {
+        Logo: '/components/admin/Logo',
+        Icon: '/components/admin/Icon',
+      },
+
+      beforeDashboard: ['/components/admin/WelcomeMessage'],
+    },
   },
-  collections: [Speakers, SpeakerTypes, Users, Media, Documents],
+  collections: [Speakers, SpeakerTypes, Representatives, Users, Media, Documents],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

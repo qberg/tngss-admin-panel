@@ -12,7 +12,7 @@ export const SpeakerTypes: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Speaker Management',
+    group: 'Config',
     defaultColumns: ['name', 'description', 'isActive', 'createdAt'],
     description: 'Manage speaker type categories (Domestic, International, etc.)',
   },
