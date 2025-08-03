@@ -7,6 +7,8 @@
 
 /* orange : #F5710C blue:  */
 :root {
+  color-scheme: light;
+
   --theme-orange: #f5710c;
   --theme-blue: #0055ff;
   --theme-green: #18bfdb;
