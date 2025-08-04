@@ -92,8 +92,12 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'about-us-wp': AboutUsWp;
+  };
+  globalsSelect: {
+    'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -703,6 +707,122 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-us-wp".
+ */
+export interface AboutUsWp {
+  id: string;
+  hero?: {
+    title?: string | null;
+    desc?: string | null;
+  };
+  introduction?: {
+    /**
+     * Main heading for the introduction section
+     */
+    title?: string | null;
+    /**
+     * Introduction content. Each point will be a paragraph.
+     */
+    description?:
+      | {
+          point?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  mission?: {
+    /**
+     * Main heading for the mission section
+     */
+    title?: string | null;
+    /**
+     * Mission content. Each point will be a paragraph.
+     */
+    description?:
+      | {
+          point?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Image to display alongside the mission content
+     */
+    image?: (string | null) | Media;
+    /**
+     * Alternative text for the image (for accessibility)
+     */
+    imageAlt?: string | null;
+  };
+  committe?: {
+    title?: string | null;
+    members?:
+      | {
+          name?: string | null;
+          designation?: string | null;
+          organization?: string | null;
+          image?: (string | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-us-wp_select".
+ */
+export interface AboutUsWpSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        desc?: T;
+      };
+  introduction?:
+    | T
+    | {
+        title?: T;
+        description?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+      };
+  mission?:
+    | T
+    | {
+        title?: T;
+        description?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        image?: T;
+        imageAlt?: T;
+      };
+  committe?:
+    | T
+    | {
+        title?: T;
+        members?:
+          | T
+          | {
+              name?: T;
+              designation?: T;
+              organization?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

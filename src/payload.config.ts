@@ -14,6 +14,7 @@ import { Documents } from './collections/Documents/config'
 import { Speakers } from './collections/Speakers/config'
 import { SpeakerTypes } from './collections/SpeakerTypes/config'
 import { Representatives } from './collections/Representatives/config'
+import { AboutUsWebPage } from './globals/AboutUsWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -44,6 +45,18 @@ export default buildConfig({
       },
     },
   },
+  cors: [
+    // Development
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+
+    // Production domains
+    'https://dev.tngss.startuptn.in',
+    'https://tngss.startuptn.in',
+  ],
+
+  globals: [AboutUsWebPage],
   collections: [Speakers, SpeakerTypes, Representatives, Users, Media, Documents],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
