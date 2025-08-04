@@ -1,5 +1,6 @@
 import { anyone } from '@/collections/Users/access/anyone'
 import { contentManager } from '@/collections/Users/access/contentManager'
+import { ctaField } from '@/fields/cta'
 import type { GlobalConfig } from 'payload'
 
 export const AboutUsWebPage: GlobalConfig = {
@@ -126,7 +127,30 @@ export const AboutUsWebPage: GlobalConfig = {
           label: 'Intro Mission Section',
         },
         {
-          fields: [],
+          fields: [
+            {
+              type: 'group',
+              name: 'whyTN',
+              label: 'Why Tamil Nadu',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'Description',
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                },
+              ],
+            },
+          ],
           label: 'Why Tamil Nadu Section',
         },
         {
@@ -180,18 +204,86 @@ export const AboutUsWebPage: GlobalConfig = {
               ],
             },
           ],
-          label: 'Organizing Committe',
+          label: 'Organising Committe',
         },
         {
-          fields: [],
-          label: 'Focus Areas Section',
+          fields: [
+            {
+              name: 'pavilion',
+              type: 'array',
+              label: 'Discover Pavilion',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'Description',
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                },
+              ],
+            },
+          ],
+          label: 'Discover Pavilion',
         },
         {
-          fields: [],
-          label: 'Key Focus Section',
+          fields: [
+            {
+              type: 'array',
+              name: 'highlights',
+              maxRows: 3,
+              admin: {
+                isSortable: true,
+              },
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                },
+                {
+                  name: 'description',
+                  type: 'text',
+                  label: 'Description',
+                },
+                {
+                  name: 'icon',
+                  type: 'upload',
+                  relationTo: 'media',
+                },
+              ],
+            },
+          ],
+          label: 'Key Highlights',
         },
         {
-          fields: [],
+          fields: [
+            {
+              name: 'getInvolved',
+              type: 'group',
+              fields: [
+                {
+                  name: 'content',
+                  type: 'array',
+                  fields: [
+                    {
+                      name: 'para',
+                      type: 'textarea',
+                      label: 'Paragraph',
+                    },
+                  ],
+                },
+                ctaField,
+              ],
+            },
+          ],
           label: 'Get Involved Section',
         },
       ],

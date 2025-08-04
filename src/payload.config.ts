@@ -96,7 +96,7 @@ export default buildConfig({
           },
         },
       },
-      bucket: process.env.DOCUMENTS_S3_BUCKET || 'tngss-documents',
+      bucket: process.env.DOCUMENTS_S3_BUCKET || 'tngss-payload-media',
       config: {
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',

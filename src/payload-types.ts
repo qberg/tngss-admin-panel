@@ -756,6 +756,11 @@ export interface AboutUsWp {
      */
     imageAlt?: string | null;
   };
+  whyTN?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (string | null) | Media;
+  };
   committe?: {
     title?: string | null;
     members?:
@@ -767,6 +772,36 @@ export interface AboutUsWp {
           id?: string | null;
         }[]
       | null;
+  };
+  pavilion?:
+    | {
+        title?: string | null;
+        description?: string | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  highlights?:
+    | {
+        title?: string | null;
+        description?: string | null;
+        icon?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  getInvolved?: {
+    content?:
+      | {
+          para?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    cta?: {
+      label?: string | null;
+      type?: ('internal' | 'external') | null;
+      page?: string | null;
+      url?: string | null;
+    };
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -806,6 +841,13 @@ export interface AboutUsWpSelect<T extends boolean = true> {
         image?: T;
         imageAlt?: T;
       };
+  whyTN?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   committe?:
     | T
     | {
@@ -818,6 +860,40 @@ export interface AboutUsWpSelect<T extends boolean = true> {
               organization?: T;
               image?: T;
               id?: T;
+            };
+      };
+  pavilion?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
+  getInvolved?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              para?: T;
+              id?: T;
+            };
+        cta?:
+          | T
+          | {
+              label?: T;
+              type?: T;
+              page?: T;
+              url?: T;
             };
       };
   updatedAt?: T;
