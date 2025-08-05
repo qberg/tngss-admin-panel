@@ -5,7 +5,7 @@ import type { GlobalConfig } from 'payload'
 
 export const AboutUsWebPage: GlobalConfig = {
   slug: 'about-us-wp',
-  label: 'About Us',
+  label: 'About',
   admin: {
     group: 'Website Pages',
   },
@@ -209,6 +209,11 @@ export const AboutUsWebPage: GlobalConfig = {
         {
           fields: [
             {
+              name: 'pavilionTitle',
+              type: 'text',
+              label: 'Title',
+            },
+            {
               name: 'pavilion',
               type: 'array',
               label: 'Discover Pavilion',
@@ -236,9 +241,13 @@ export const AboutUsWebPage: GlobalConfig = {
         {
           fields: [
             {
+              name: 'highlightsTitle',
+              type: 'text',
+              label: 'Title',
+            },
+            {
               type: 'array',
               name: 'highlights',
-              maxRows: 3,
               admin: {
                 isSortable: true,
               },
@@ -270,6 +279,11 @@ export const AboutUsWebPage: GlobalConfig = {
               type: 'group',
               fields: [
                 {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                },
+                {
                   name: 'content',
                   type: 'array',
                   fields: [
@@ -280,7 +294,22 @@ export const AboutUsWebPage: GlobalConfig = {
                     },
                   ],
                 },
-                ctaField,
+                {
+                  name: 'images',
+                  type: 'array',
+                  fields: [
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                    },
+                  ],
+                },
+                {
+                  type: 'array',
+                  name: 'ctas',
+                  fields: [ctaField],
+                },
               ],
             },
           ],

@@ -93,9 +93,11 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
+    'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
   };
   globalsSelect: {
+    'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
   };
   locale: null;
@@ -710,6 +712,20 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-wp".
+ */
+export interface HomeWp {
+  id: string;
+  hero?: {
+    location?: string | null;
+    dates?: string | null;
+    bgVideo?: (string | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-us-wp".
  */
 export interface AboutUsWp {
@@ -773,6 +789,7 @@ export interface AboutUsWp {
         }[]
       | null;
   };
+  pavilionTitle?: string | null;
   pavilion?:
     | {
         title?: string | null;
@@ -781,6 +798,7 @@ export interface AboutUsWp {
         id?: string | null;
       }[]
     | null;
+  highlightsTitle?: string | null;
   highlights?:
     | {
         title?: string | null;
@@ -790,21 +808,49 @@ export interface AboutUsWp {
       }[]
     | null;
   getInvolved?: {
+    title?: string | null;
     content?:
       | {
           para?: string | null;
           id?: string | null;
         }[]
       | null;
-    cta?: {
-      label?: string | null;
-      type?: ('internal' | 'external') | null;
-      page?: string | null;
-      url?: string | null;
-    };
+    images?:
+      | {
+          image?: (string | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    ctas?:
+      | {
+          cta?: {
+            label?: string | null;
+            type?: ('internal' | 'external') | null;
+            page?: string | null;
+            url?: string | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-wp_select".
+ */
+export interface HomeWpSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        location?: T;
+        dates?: T;
+        bgVideo?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -862,6 +908,7 @@ export interface AboutUsWpSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  pavilionTitle?: T;
   pavilion?:
     | T
     | {
@@ -870,6 +917,7 @@ export interface AboutUsWpSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  highlightsTitle?: T;
   highlights?:
     | T
     | {
@@ -881,19 +929,31 @@ export interface AboutUsWpSelect<T extends boolean = true> {
   getInvolved?:
     | T
     | {
+        title?: T;
         content?:
           | T
           | {
               para?: T;
               id?: T;
             };
-        cta?:
+        images?:
           | T
           | {
-              label?: T;
-              type?: T;
-              page?: T;
-              url?: T;
+              image?: T;
+              id?: T;
+            };
+        ctas?:
+          | T
+          | {
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    type?: T;
+                    page?: T;
+                    url?: T;
+                  };
+              id?: T;
             };
       };
   updatedAt?: T;
