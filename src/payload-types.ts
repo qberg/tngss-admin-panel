@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     speakers: Speaker;
     'speaker-types': SpeakerType;
+    venues: Venue;
     representatives: Representative;
     users: User;
     media: Media;
@@ -81,6 +82,7 @@ export interface Config {
   collectionsSelect: {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
     'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
+    venues: VenuesSelect<false> | VenuesSelect<true>;
     representatives: RepresentativesSelect<false> | RepresentativesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -378,6 +380,35 @@ export interface Document {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues".
+ */
+export interface Venue {
+  id: string;
+  name: string;
+  city: string;
+  type: 'main_event' | 'partner_event';
+  mapUrl?: string | null;
+  halls?:
+    | {
+        hall?: {
+          name?: string | null;
+          zones?:
+            | {
+                name?: string | null;
+                measurements?: string | null;
+                capacity?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "representatives".
  */
 export interface Representative {
@@ -443,6 +474,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'speaker-types';
         value: string | SpeakerType;
+      } | null)
+    | ({
+        relationTo: 'venues';
+        value: string | Venue;
       } | null)
     | ({
         relationTo: 'representatives';
@@ -598,6 +633,36 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
   icon?: T;
   usageCount?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues_select".
+ */
+export interface VenuesSelect<T extends boolean = true> {
+  name?: T;
+  city?: T;
+  type?: T;
+  mapUrl?: T;
+  halls?:
+    | T
+    | {
+        hall?:
+          | T
+          | {
+              name?: T;
+              zones?:
+                | T
+                | {
+                    name?: T;
+                    measurements?: T;
+                    capacity?: T;
+                    id?: T;
+                  };
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

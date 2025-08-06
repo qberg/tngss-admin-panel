@@ -16,6 +16,8 @@ import { SpeakerTypes } from './collections/SpeakerTypes/config'
 import { Representatives } from './collections/Representatives/config'
 import { AboutUsWebPage } from './globals/AboutUsWebPage/config'
 import { HomeWebPage } from './globals/HomeWebPage/config'
+import { Halls } from './collections/Halls/config'
+import { Veneues } from './collections/Venues/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,10 +57,11 @@ export default buildConfig({
     // Production domains
     'https://dev.tngss.startuptn.in',
     'https://tngss.startuptn.in',
+    '*',
   ],
 
   globals: [HomeWebPage, AboutUsWebPage],
-  collections: [Speakers, SpeakerTypes, Representatives, Users, Media, Documents],
+  collections: [Speakers, SpeakerTypes, Veneues, Representatives, Users, Media, Documents],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

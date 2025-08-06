@@ -10,6 +10,7 @@ export const MainEvents: CollectionConfig = {
   },
   admin: {
     group: 'Events Management',
+    useAsTitle: 'title',
   },
   access: {
     create: eventManager,
@@ -17,5 +18,14 @@ export const MainEvents: CollectionConfig = {
     update: eventManager,
     delete: eventManager,
   },
-  fields: [],
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      label: 'Name of the Event',
+      admin: {
+        placeholder: 'Startup Networking Mixer',
+      },
+    },
+  ],
 }
