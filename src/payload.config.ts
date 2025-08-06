@@ -16,7 +16,6 @@ import { SpeakerTypes } from './collections/SpeakerTypes/config'
 import { Representatives } from './collections/Representatives/config'
 import { AboutUsWebPage } from './globals/AboutUsWebPage/config'
 import { HomeWebPage } from './globals/HomeWebPage/config'
-import { Halls } from './collections/Halls/config'
 import { Veneues } from './collections/Venues/config'
 
 const filename = fileURLToPath(import.meta.url)
