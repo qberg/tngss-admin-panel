@@ -3,11 +3,11 @@ import { eventManager } from '../Users/access/eventManager'
 import { anyone } from '../Users/access/anyone'
 import { slugField } from '@/fields/slug'
 
-export const EventFormats: CollectionConfig = {
-  slug: 'event-formats',
+export const EventTags: CollectionConfig = {
+  slug: 'event-tags',
   labels: {
-    singular: 'Event Format',
-    plural: 'Event Formats',
+    singular: 'Event Tag',
+    plural: 'Event Tags',
   },
   admin: {
     group: 'Events Management',
@@ -23,10 +23,8 @@ export const EventFormats: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
-      label: 'Name of the event format',
-      admin: {
-        placeholder: 'e.g., "Keynote", "Workshop", "Panel Discussion"',
-      },
+      required: true,
+      label: 'Name of the tag',
     },
     slugField,
   ],

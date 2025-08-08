@@ -17,6 +17,13 @@ import { Representatives } from './collections/Representatives/config'
 import { AboutUsWebPage } from './globals/AboutUsWebPage/config'
 import { HomeWebPage } from './globals/HomeWebPage/config'
 import { Veneues } from './collections/Venues/config'
+import { EventFormats } from './collections/EventFormats/config'
+import { Events } from './collections/Events/config'
+import { EventTags } from './collections/EventTags/config'
+import { Halls } from './collections/Halls/config'
+import { Zones } from './collections/Zones/config'
+import { Cities } from './collections/Cities/config'
+import { TicketTypes } from './collections/TicketTypes/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -60,7 +67,22 @@ export default buildConfig({
   ],
 
   globals: [HomeWebPage, AboutUsWebPage],
-  collections: [Speakers, SpeakerTypes, Veneues, Representatives, Users, Media, Documents],
+  collections: [
+    Speakers,
+    SpeakerTypes,
+    Events,
+    EventFormats,
+    EventTags,
+    Halls,
+    Zones,
+    Veneues,
+    Cities,
+    TicketTypes,
+    Representatives,
+    Users,
+    Media,
+    Documents,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

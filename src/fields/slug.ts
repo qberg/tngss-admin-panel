@@ -1,3 +1,5 @@
+import { anyoneFieldAcess } from '@/collections/Users/access/anyone'
+import { eventManagerFieldAccess } from '@/collections/Users/access/eventManager'
 import type { Field } from 'payload'
 
 export const createSlugField = (sourceField: string = 'name'): Field => {
@@ -5,6 +7,10 @@ export const createSlugField = (sourceField: string = 'name'): Field => {
     name: 'slug',
     type: 'text',
     label: 'URL Slug',
+    access: {
+      read: anyoneFieldAcess,
+      update: eventManagerFieldAccess,
+    },
     admin: {
       position: 'sidebar',
       description: `URL-friendly identifier (English only, auto-generated from ${sourceField})`,
@@ -12,8 +18,8 @@ export const createSlugField = (sourceField: string = 'name'): Field => {
     hooks: {
       beforeValidate: [
         ({ value, data }) => {
-          if (!value && data?.name) {
-            return data.name
+          if (!value && data?.[sourceField]) {
+            return data[sourceField]
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, '-')
               .replace(/(^-|-$)+/g, '')

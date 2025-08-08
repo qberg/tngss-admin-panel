@@ -69,7 +69,14 @@ export interface Config {
   collections: {
     speakers: Speaker;
     'speaker-types': SpeakerType;
+    events: Event;
+    'event-formats': EventFormat;
+    'event-tags': EventTag;
+    halls: Hall;
+    zones: Zone;
     venues: Venue;
+    cities: City;
+    'ticket-types': TicketType;
     representatives: Representative;
     users: User;
     media: Media;
@@ -82,7 +89,14 @@ export interface Config {
   collectionsSelect: {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
     'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    'event-formats': EventFormatsSelect<false> | EventFormatsSelect<true>;
+    'event-tags': EventTagsSelect<false> | EventTagsSelect<true>;
+    halls: HallsSelect<false> | HallsSelect<true>;
+    zones: ZonesSelect<false> | ZonesSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
+    cities: CitiesSelect<false> | CitiesSelect<true>;
+    'ticket-types': TicketTypesSelect<false> | TicketTypesSelect<true>;
     representatives: RepresentativesSelect<false> | RepresentativesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -215,9 +229,9 @@ export interface Speaker {
    * Special requirements, preferences, etc.
    */
   accommodation_details?: string | null;
-  duration?: {
-    from_date?: string | null;
-    to_date?: string | null;
+  duration: {
+    from_date: string;
+    to_date: string;
   };
   status?: ('confirmed' | 'pending' | 'cancelled' | 'completed') | null;
   /**
@@ -380,6 +394,108 @@ export interface Document {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  main_or_partner: 'main_event' | 'partner_event';
+  access_level?: (string | TicketType)[] | null;
+  /**
+   * Ensure sponsor logos are embedded in the image, if applicable
+   */
+  banner_image?: (string | null) | Media;
+  title: string;
+  about?: string | null;
+  schedule: {
+    from_date: string;
+    to_date: string;
+  };
+  hall?: (string | null) | Hall;
+  zone?: (string | null) | Zone;
+  partner_event_venue?: {
+    event_mode: 'online' | 'offline';
+    platform?: ('zoom' | 'teams' | 'meet' | 'youtube' | 'custom') | null;
+    /**
+     * Link for virtual attendees to join
+     */
+    joinUrl?: string | null;
+    meetingId?: string | null;
+    passcode?: string | null;
+    venue: string;
+    city: string | City;
+  };
+  agenda?:
+    | {
+        time?: string | null;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  speakers?:
+    | {
+        speaker?: (string | null) | Speaker;
+        id?: string | null;
+      }[]
+    | null;
+  format: string | EventFormat;
+  tags: (string | EventTag)[];
+  /**
+   * URL-friendly identifier (English only, auto-generated from title)
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ticket-types".
+ */
+export interface TicketType {
+  id: string;
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  /**
+   * List of benefits included with this ticket type
+   */
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  external_integration?: {
+    /**
+     * Reference ID in kamelon ticketing system
+     */
+    vendorTicketTypeId?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "halls".
+ */
+export interface Hall {
+  id: string;
+  venue: string | Venue;
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  /**
+   * Number of zones in this hall
+   */
+  zones_count?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "venues".
  */
 export interface Venue {
@@ -388,22 +504,65 @@ export interface Venue {
   city: string;
   type: 'main_event' | 'partner_event';
   mapUrl?: string | null;
-  halls?:
-    | {
-        hall?: {
-          name?: string | null;
-          zones?:
-            | {
-                name?: string | null;
-                measurements?: string | null;
-                capacity?: string | null;
-                id?: string | null;
-              }[]
-            | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zones".
+ */
+export interface Zone {
+  id: string;
+  hall: string | Hall;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  name: string;
+  dimensions?: string | null;
+  capacity?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities".
+ */
+export interface City {
+  id: string;
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-formats".
+ */
+export interface EventFormat {
+  id: string;
+  name?: string | null;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-tags".
+ */
+export interface EventTag {
+  id: string;
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -476,8 +635,36 @@ export interface PayloadLockedDocument {
         value: string | SpeakerType;
       } | null)
     | ({
+        relationTo: 'events';
+        value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'event-formats';
+        value: string | EventFormat;
+      } | null)
+    | ({
+        relationTo: 'event-tags';
+        value: string | EventTag;
+      } | null)
+    | ({
+        relationTo: 'halls';
+        value: string | Hall;
+      } | null)
+    | ({
+        relationTo: 'zones';
+        value: string | Zone;
+      } | null)
+    | ({
         relationTo: 'venues';
         value: string | Venue;
+      } | null)
+    | ({
+        relationTo: 'cities';
+        value: string | City;
+      } | null)
+    | ({
+        relationTo: 'ticket-types';
+        value: string | TicketType;
       } | null)
     | ({
         relationTo: 'representatives';
@@ -638,6 +825,99 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  main_or_partner?: T;
+  access_level?: T;
+  banner_image?: T;
+  title?: T;
+  about?: T;
+  schedule?:
+    | T
+    | {
+        from_date?: T;
+        to_date?: T;
+      };
+  hall?: T;
+  zone?: T;
+  partner_event_venue?:
+    | T
+    | {
+        event_mode?: T;
+        platform?: T;
+        joinUrl?: T;
+        meetingId?: T;
+        passcode?: T;
+        venue?: T;
+        city?: T;
+      };
+  agenda?:
+    | T
+    | {
+        time?: T;
+        description?: T;
+        id?: T;
+      };
+  speakers?:
+    | T
+    | {
+        speaker?: T;
+        id?: T;
+      };
+  format?: T;
+  tags?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-formats_select".
+ */
+export interface EventFormatsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-tags_select".
+ */
+export interface EventTagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "halls_select".
+ */
+export interface HallsSelect<T extends boolean = true> {
+  venue?: T;
+  name?: T;
+  slug?: T;
+  zones_count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "zones_select".
+ */
+export interface ZonesSelect<T extends boolean = true> {
+  hall?: T;
+  slug?: T;
+  name?: T;
+  dimensions?: T;
+  capacity?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "venues_select".
  */
 export interface VenuesSelect<T extends boolean = true> {
@@ -645,23 +925,36 @@ export interface VenuesSelect<T extends boolean = true> {
   city?: T;
   type?: T;
   mapUrl?: T;
-  halls?:
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
+export interface CitiesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ticket-types_select".
+ */
+export interface TicketTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  features?:
     | T
     | {
-        hall?:
-          | T
-          | {
-              name?: T;
-              zones?:
-                | T
-                | {
-                    name?: T;
-                    measurements?: T;
-                    capacity?: T;
-                    id?: T;
-                  };
-            };
+        feature?: T;
         id?: T;
+      };
+  external_integration?:
+    | T
+    | {
+        vendorTicketTypeId?: T;
       };
   updatedAt?: T;
   createdAt?: T;

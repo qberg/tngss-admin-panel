@@ -11,7 +11,7 @@ export const Veneues: CollectionConfig = {
   admin: {
     group: 'Venue Management',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'city', 'type', 'halls'],
+    defaultColumns: ['name', 'city', 'type'],
   },
   access: {
     create: eventManager,
@@ -59,59 +59,6 @@ export const Veneues: CollectionConfig = {
       admin: {
         position: 'sidebar',
       },
-    },
-    {
-      name: 'halls',
-      type: 'array',
-      fields: [
-        {
-          name: 'hall',
-          type: 'group',
-          fields: [
-            {
-              name: 'name',
-              type: 'text',
-              label: 'Name of the hall',
-              admin: {
-                placeholder: 'Hall A',
-              },
-            },
-            {
-              name: 'zones',
-              type: 'array',
-              admin: {
-                isSortable: true,
-              },
-              fields: [
-                {
-                  name: 'name',
-                  type: 'text',
-                  label: 'Name of the Zone',
-                  admin: {
-                    placeholder: 'Breakout Zone',
-                  },
-                },
-                {
-                  name: 'measurements',
-                  type: 'text',
-                  label: 'Measurement of the zone',
-                  admin: {
-                    placeholder: '115" x 40"',
-                  },
-                },
-                {
-                  name: 'capacity',
-                  type: 'text',
-                  label: 'Max capacity of the zone',
-                  admin: {
-                    placeholder: '20 Persons',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
     },
   ],
 }

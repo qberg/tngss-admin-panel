@@ -1,16 +1,17 @@
 import type { CollectionConfig } from 'payload'
 import { eventManager } from '../Users/access/eventManager'
 import { anyone } from '../Users/access/anyone'
+import { slugField } from '@/fields/slug'
 
-export const MainEvents: CollectionConfig = {
-  slug: 'main-events',
+export const Cities: CollectionConfig = {
+  slug: 'cities',
   labels: {
-    singular: 'Main Event',
-    plural: 'Main Events',
+    singular: 'City',
+    plural: 'Cities',
   },
   admin: {
-    group: 'Events Management',
-    useAsTitle: 'title',
+    group: 'Venue Management',
+    useAsTitle: 'name',
   },
   access: {
     create: eventManager,
@@ -20,12 +21,11 @@ export const MainEvents: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
+      name: 'name',
       type: 'text',
-      label: 'Name of the Event',
-      admin: {
-        placeholder: 'Startup Networking Mixer',
-      },
+      required: true,
+      label: 'Name of the City',
     },
+    slugField,
   ],
 }
