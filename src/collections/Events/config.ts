@@ -1,23 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { eventManager, eventManagerFieldAccess } from '../Users/access/eventManager'
-import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
-//import { userFieldAccess } from '../Users/access/user'
+import { eventManager } from '../Users/access/eventManager'
+import { anyone } from '../Users/access/anyone'
 import { slugFromTitle } from '@/fields/slug'
 import { scheduleField } from '@/fields/duration'
 import { virtualDetailsField } from '@/fields/virtualDetails'
-
-const publicFieldAccess = {
-  read: anyoneFieldAcess,
-  update: eventManagerFieldAccess,
-}
-
-{
-  /*const adminFieldAccess = {
-  read: userFieldAccess,
-  update: eventManagerFieldAccess,
-}
-*/
-}
+import { publicFieldAccess } from '../Users/access/groups'
+import { fcfsSettingsField } from '@/fields/events/fcfsSettings'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -275,5 +263,64 @@ export const Events: CollectionConfig = {
     slugFromTitle,
 
     // registeration and capacity management
+    {
+      type: 'collapsible',
+      label: '🎫 Event Registration & Capacity Management',
+      admin: {
+        initCollapsed: true,
+        description: 'Configure how users can register for this event',
+      },
+      fields: [
+        {
+          name: 'registeration_mode',
+          label: 'Registeration Mode',
+          type: 'select',
+          required: true,
+          defaultValue: 'fcfs',
+          access: publicFieldAccess,
+          options: [
+            {
+              label: '🚫 No Registration Required',
+              value: 'none',
+            },
+            {
+              label: '⚡ First Come First Serve',
+              value: 'fcfs',
+            },
+            {
+              label: '✅ Admin Approval Required',
+              value: 'approval',
+            },
+          ],
+          admin: {
+            description:
+              'How should users register for this event? (Approval mode will be available in future release)',
+          },
+          // @ts-expect-error payload waiting for its magic
+          validate: (value) => {
+            if (value === 'approval') {
+              return 'Admin approval mode is not yet available. Please choose "First Come First Serve" or "No Registration Required".'
+            }
+            return true
+          },
+        },
+
+        // fcfs settings
+        fcfsSettingsField,
+      ],
+    },
+    // current registerations, will fetch from microservices api
+    {
+      name: 'current_registerations',
+      label: 'Current Registerations',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        condition: (data) => ['fcfs', 'approval'].includes(data?.registeration_mode),
+        description: 'Updated automatically by registeration service',
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
   ],
 }

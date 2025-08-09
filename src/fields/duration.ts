@@ -80,3 +80,10 @@ export const scheduleField = createDurationField(
   'Start Time',
   'End Time',
 )
+export const registerationField = createDurationField(
+  'registeration',
+  'Registeration Period',
+  'dayAndTime',
+  'Start Time',
+  'End Time',
+)

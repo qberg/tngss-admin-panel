@@ -443,6 +443,58 @@ export interface Event {
    * URL-friendly identifier (English only, auto-generated from title)
    */
   slug?: string | null;
+  /**
+   * How should users register for this event? (Approval mode will be available in future release)
+   */
+  registeration_mode: 'none' | 'fcfs' | 'approval';
+  /**
+   * Settings specific to FCFS registeration
+   */
+  fcfs_settings?: {
+    /**
+     * Set the maximum number of attendees for this event
+     */
+    capacity_settings?: {
+      /**
+       * Choose whether this event has a capacity limit
+       */
+      capacity_type: 'limited' | 'unlimited';
+      /**
+       * Maximum number of people who can attend
+       */
+      max_capacity?: number | null;
+      /**
+       * Show warning when registrations exceed this number (optional)
+       */
+      soft_capacity_warning?: number | null;
+    };
+    /**
+     * Allow users to join waitlist when event reaches capacity
+     */
+    enable_waitlist?: boolean | null;
+    /**
+     * Automatically paromote users when spots become available
+     */
+    auto_promote_from_waitlist?: boolean | null;
+    registeration: {
+      from_date: string;
+      to_date: string;
+    };
+    unlimited_capacity_settings?: {
+      /**
+       * Send notification to admins when registrations reach this number
+       */
+      notify_admins_at?: number | null;
+      /**
+       * Automatically close registration at this number (optional safety limit)
+       */
+      auto_close_registeration_at?: number | null;
+    };
+  };
+  /**
+   * Updated automatically by registeration service
+   */
+  current_registerations?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -868,6 +920,33 @@ export interface EventsSelect<T extends boolean = true> {
   format?: T;
   tags?: T;
   slug?: T;
+  registeration_mode?: T;
+  fcfs_settings?:
+    | T
+    | {
+        capacity_settings?:
+          | T
+          | {
+              capacity_type?: T;
+              max_capacity?: T;
+              soft_capacity_warning?: T;
+            };
+        enable_waitlist?: T;
+        auto_promote_from_waitlist?: T;
+        registeration?:
+          | T
+          | {
+              from_date?: T;
+              to_date?: T;
+            };
+        unlimited_capacity_settings?:
+          | T
+          | {
+              notify_admins_at?: T;
+              auto_close_registeration_at?: T;
+            };
+      };
+  current_registerations?: T;
   updatedAt?: T;
   createdAt?: T;
 }
