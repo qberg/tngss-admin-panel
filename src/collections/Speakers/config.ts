@@ -3,7 +3,6 @@ import { eventManager, eventManagerFieldAccess } from '../Users/access/eventMana
 import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
 import { durationField } from '@/fields/duration'
-import { expertiseField } from '@/fields/options/expertise'
 import { bulkOperationsField } from '@/fields/bulkOperations'
 
 const publicFieldAccess = {
@@ -146,79 +145,13 @@ export const Speakers: CollectionConfig = {
             rows: 4,
           },
         },
-        {
-          name: 'experience',
-          label: 'Professional Experience',
-          type: 'array',
-          access: publicFieldAccess,
-          fields: [
-            {
-              name: 'organization_name',
-              label: 'Organization Name',
-              type: 'text',
-              required: true,
-              admin: {
-                width: '50%',
-              },
-            },
-            {
-              name: 'designation',
-              label: 'Job Title',
-              type: 'text',
-              required: true,
-              admin: {
-                width: '50%',
-              },
-            },
-            {
-              name: 'currently_work_here',
-              label: 'Currently Work Here',
-              type: 'checkbox',
-              defaultValue: false,
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'from_date',
-                  label: 'Start Date',
-                  type: 'date',
-                  required: true,
-                  admin: {
-                    width: '50%',
-                    date: {
-                      pickerAppearance: 'dayOnly',
-                    },
-                  },
-                },
-                {
-                  name: 'to_date',
-                  label: 'End Date',
-                  type: 'date',
-                  admin: {
-                    width: '50%',
-                    condition: (siblingData) => !siblingData?.currently_work_here,
-                    date: {
-                      pickerAppearance: 'dayOnly',
-                    },
-                  },
-                },
-              ],
-            },
-          ],
-        },
 
         {
-          name: 'education',
+          name: 'alma_matter',
           type: 'array',
           label: 'Education',
           access: publicFieldAccess,
           fields: [
-            {
-              name: 'degree',
-              type: 'text',
-              label: 'Degree',
-            },
             {
               name: 'college',
               type: 'text',
@@ -240,12 +173,13 @@ export const Speakers: CollectionConfig = {
           ],
         },
 
-        expertiseField,
         {
-          name: 'bio',
-          type: 'textarea',
+          name: 'expertise',
+          type: 'relationship',
           access: publicFieldAccess,
-          label: 'Detailed Bio',
+          hasMany: true,
+          relationTo: 'event-tags',
+          label: 'Expertise',
         },
       ],
     },
@@ -336,6 +270,17 @@ export const Speakers: CollectionConfig = {
                 width: '50%',
               },
             },
+
+            {
+              name: 'hotel_map_url',
+              label: 'Hotel Map Url',
+              type: 'text',
+              access: travelFieldAcess,
+              admin: {
+                width: '50%',
+                placeholder: 'https://googlemaps.com/...',
+              },
+            },
             {
               name: 'room_number',
               label: 'Room Number',
@@ -352,7 +297,8 @@ export const Speakers: CollectionConfig = {
           fields: [
             {
               name: 'assigned_coordinator',
-              type: 'text',
+              type: 'relationship',
+              relationTo: 'representatives',
               label: 'Assigned Coordinator',
               access: travelFieldAcess,
               admin: {

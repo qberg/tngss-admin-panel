@@ -21,3 +21,11 @@ Partner Events Collection - Pre-summit events
 User Tickets Collection - Links users to their ticket tiers
 Event Registrations Collection - Tracks who registered for what
 Show Interest Collection - For non-registration events
+
+pm2 start .next/standalone/server.js \
+ --name payload-app \
+ -i max \
+ --node-args="--max-old-space-size=1536" \
+ -e NODE_ENV=production \
+ -e PORT=3000 \
+ -e HOSTNAME=0.0.0.0

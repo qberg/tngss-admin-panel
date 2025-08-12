@@ -24,6 +24,7 @@ import { Halls } from './collections/Halls/config'
 import { Zones } from './collections/Zones/config'
 import { Cities } from './collections/Cities/config'
 import { TicketTypes } from './collections/TicketTypes/config'
+import { HomeAppPage } from './globals/HomeAppPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -66,7 +67,7 @@ export default buildConfig({
     '*',
   ],
 
-  globals: [HomeWebPage, AboutUsWebPage],
+  globals: [HomeWebPage, AboutUsWebPage, HomeAppPage],
   collections: [
     Speakers,
     SpeakerTypes,

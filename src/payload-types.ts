@@ -111,10 +111,12 @@ export interface Config {
   globals: {
     'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
+    'home-app': HomeApp;
   };
   globalsSelect: {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
+    'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
   };
   locale: null;
   user: User & {
@@ -163,19 +165,8 @@ export interface Speaker {
     country?: string | null;
   };
   summary?: string | null;
-  experience?:
+  alma_matter?:
     | {
-        organization_name: string;
-        designation: string;
-        currently_work_here?: boolean | null;
-        from_date: string;
-        to_date?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  education?:
-    | {
-        degree?: string | null;
         college?: string | null;
         id?: string | null;
       }[]
@@ -186,21 +177,7 @@ export interface Speaker {
         id?: string | null;
       }[]
     | null;
-  expertise?:
-    | (
-        | 'ai_ml'
-        | 'data_science'
-        | 'web_development'
-        | 'mobile_development'
-        | 'cloud_computing'
-        | 'cybersecurity'
-        | 'devops'
-        | 'project_management'
-        | 'ui_ux_design'
-        | 'marketing'
-      )[]
-    | null;
-  bio?: string | null;
+  expertise?: (string | EventTag)[] | null;
   /**
    * Upload flight details - add as many documents or images as needed
    */
@@ -223,8 +200,9 @@ export interface Speaker {
       }[]
     | null;
   hotel?: string | null;
+  hotel_map_url?: string | null;
   room_number?: string | null;
-  assigned_coordinator?: string | null;
+  assigned_coordinator?: (string | null) | Representative;
   /**
    * Special requirements, preferences, etc.
    */
@@ -359,6 +337,20 @@ export interface SpeakerType {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-tags".
+ */
+export interface EventTag {
+  id: string;
+  name: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "documents".
  */
 export interface Document {
@@ -391,6 +383,20 @@ export interface Document {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "representatives".
+ */
+export interface Representative {
+  id: string;
+  name: string;
+  designation?: string | null;
+  org_name?: string | null;
+  phone_number?: string | null;
+  email_id?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -605,34 +611,6 @@ export interface EventFormat {
   createdAt: string;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "event-tags".
- */
-export interface EventTag {
-  id: string;
-  name: string;
-  /**
-   * URL-friendly identifier (English only, auto-generated from name)
-   */
-  slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "representatives".
- */
-export interface Representative {
-  id: string;
-  name: string;
-  designation?: string | null;
-  org_name?: string | null;
-  phone_number?: string | null;
-  email_id?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * Manage admin panel users and their permissions
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -794,20 +772,9 @@ export interface SpeakersSelect<T extends boolean = true> {
         country?: T;
       };
   summary?: T;
-  experience?:
+  alma_matter?:
     | T
     | {
-        organization_name?: T;
-        designation?: T;
-        currently_work_here?: T;
-        from_date?: T;
-        to_date?: T;
-        id?: T;
-      };
-  education?:
-    | T
-    | {
-        degree?: T;
         college?: T;
         id?: T;
       };
@@ -818,7 +785,6 @@ export interface SpeakersSelect<T extends boolean = true> {
         id?: T;
       };
   expertise?: T;
-  bio?: T;
   travel_details?:
     | T
     | {
@@ -829,6 +795,7 @@ export interface SpeakersSelect<T extends boolean = true> {
         id?: T;
       };
   hotel?: T;
+  hotel_map_url?: T;
   room_number?: T;
   assigned_coordinator?: T;
   accommodation_details?: T;
@@ -1275,6 +1242,63 @@ export interface AboutUsWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-app".
+ */
+export interface HomeApp {
+  id: string;
+  /**
+   * Upload Banner Images that will be shown as carousel in the mobile app home page
+   */
+  home_banners?:
+    | {
+        image?: (string | null) | Media;
+        /**
+         * Configure what happens when user clicks this banner
+         */
+        click_action?: {
+          /**
+           * Choose whether to navigate to an internal app screen or external website
+           */
+          type?: ('none' | 'internal' | 'external') | null;
+          /**
+           * Select which screen to navigate to within the app
+           */
+          internal_route?:
+            | ('events' | 'speakers' | 'profile' | 'exhibition_stalls' | 'product_launch' | 'schedule_meeting')
+            | null;
+          /**
+           * Optional parameters to pass to the route (JSON format). Example: {"productId": "123", "category": "electronics"}
+           */
+          route_params?:
+            | {
+                [k: string]: unknown;
+              }
+            | unknown[]
+            | string
+            | number
+            | boolean
+            | null;
+          /**
+           * Enter the full URL (must start with http:// or https://)
+           */
+          external_url?: string | null;
+          /**
+           * Check this to open the URL in the device default browser instead of in-app browser
+           */
+          open_in_browser?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Enable to include this item in lists, filters, or dropdowns.
+   */
+  isActive?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-wp_select".
  */
 export interface HomeWpSelect<T extends boolean = true> {
@@ -1393,6 +1417,31 @@ export interface AboutUsWpSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-app_select".
+ */
+export interface HomeAppSelect<T extends boolean = true> {
+  home_banners?:
+    | T
+    | {
+        image?: T;
+        click_action?:
+          | T
+          | {
+              type?: T;
+              internal_route?: T;
+              route_params?: T;
+              external_url?: T;
+              open_in_browser?: T;
+            };
+        id?: T;
+      };
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
