@@ -1,6 +1,7 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -25,6 +26,10 @@ import { Zones } from './collections/Zones/config'
 import { Cities } from './collections/Cities/config'
 import { TicketTypes } from './collections/TicketTypes/config'
 import { HomeAppPage } from './globals/HomeAppPage/config'
+import { FaqWebPage } from './globals/FaqWebPage/config'
+import { AppVersions } from './collections/AppVersions/config'
+import { FeaturedContentApp } from './globals/FeaturedContentApp/config'
+import { AboutTNGSSApp } from './globals/AboutTNGSSApp/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -67,7 +72,14 @@ export default buildConfig({
     '*',
   ],
 
-  globals: [HomeWebPage, AboutUsWebPage, HomeAppPage],
+  globals: [
+    HomeWebPage,
+    AboutUsWebPage,
+    FaqWebPage,
+    HomeAppPage,
+    FeaturedContentApp,
+    AboutTNGSSApp,
+  ],
   collections: [
     Speakers,
     SpeakerTypes,
@@ -83,6 +95,7 @@ export default buildConfig({
     Users,
     Media,
     Documents,
+    AppVersions,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -95,6 +108,9 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    importExportPlugin({
+      collections: ['speakers', 'events'],
+    }),
     // storage-adapter-placeholder
     s3Storage({
       collections: {

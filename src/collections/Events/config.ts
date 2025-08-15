@@ -46,7 +46,7 @@ export const Events: CollectionConfig = {
       label: 'Access Level',
       type: 'relationship',
       relationTo: 'ticket-types',
-      hasMany: true,
+      hasMany: false,
       admin: {
         condition: (_, siblingData) => Boolean(siblingData?.main_or_partner === 'main_event'),
         position: 'sidebar',
@@ -252,9 +252,9 @@ export const Events: CollectionConfig = {
     {
       name: 'tags',
       type: 'relationship',
-      relationTo: 'event-tags',
+      relationTo: 'tags',
       required: true,
-      label: 'Event Tags',
+      label: 'Tags',
       hasMany: true,
       admin: {
         position: 'sidebar',
@@ -295,13 +295,6 @@ export const Events: CollectionConfig = {
           admin: {
             description:
               'How should users register for this event? (Approval mode will be available in future release)',
-          },
-          // @ts-expect-error payload waiting for its magic
-          validate: (value) => {
-            if (value === 'approval') {
-              return 'Admin approval mode is not yet available. Please choose "First Come First Serve" or "No Registration Required".'
-            }
-            return true
           },
         },
 

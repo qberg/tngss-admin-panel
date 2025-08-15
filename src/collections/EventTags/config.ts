@@ -4,10 +4,10 @@ import { anyone } from '../Users/access/anyone'
 import { slugField } from '@/fields/slug'
 
 export const EventTags: CollectionConfig = {
-  slug: 'event-tags',
+  slug: 'tags',
   labels: {
-    singular: 'Event Tag',
-    plural: 'Event Tags',
+    singular: 'Tag',
+    plural: 'Tags',
   },
   admin: {
     group: 'Events Management',

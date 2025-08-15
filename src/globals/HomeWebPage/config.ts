@@ -4,8 +4,7 @@ import type { GlobalConfig } from 'payload'
 
 export const HomeWebPage: GlobalConfig = {
   slug: 'home-wp',
-
-  label: 'Home',
+  label: 'Home - Website',
   admin: {
     group: 'Website Pages',
   },

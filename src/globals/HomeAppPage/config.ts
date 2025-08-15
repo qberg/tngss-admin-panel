@@ -5,7 +5,7 @@ import type { GlobalConfig } from 'payload'
 
 export const HomeAppPage: GlobalConfig = {
   slug: 'home-app',
-  label: 'App Home Page',
+  label: 'Home - Mobile App',
   admin: {
     group: 'Mobile App Pages',
   },

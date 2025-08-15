@@ -29,3 +29,8 @@ pm2 start .next/standalone/server.js \
  -e NODE_ENV=production \
  -e PORT=3000 \
  -e HOSTNAME=0.0.0.0
+
+## TODO
+
+- [x] Featured Content for home page
+- []

@@ -5,7 +5,7 @@ import type { GlobalConfig } from 'payload'
 
 export const AboutUsWebPage: GlobalConfig = {
   slug: 'about-us-wp',
-  label: 'About',
+  label: 'About Us - Website',
   admin: {
     group: 'Website Pages',
   },

@@ -71,7 +71,7 @@ export interface Config {
     'speaker-types': SpeakerType;
     events: Event;
     'event-formats': EventFormat;
-    'event-tags': EventTag;
+    tags: Tag;
     halls: Hall;
     zones: Zone;
     venues: Venue;
@@ -81,17 +81,24 @@ export interface Config {
     users: User;
     media: Media;
     documents: Document;
+    'app-versions': AppVersion;
+    exports: Export;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    speakers: {
+      speaking_events: 'events';
+    };
+  };
   collectionsSelect: {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
     'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     'event-formats': EventFormatsSelect<false> | EventFormatsSelect<true>;
-    'event-tags': EventTagsSelect<false> | EventTagsSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     halls: HallsSelect<false> | HallsSelect<true>;
     zones: ZonesSelect<false> | ZonesSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
@@ -101,6 +108,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
+    'app-versions': AppVersionsSelect<false> | AppVersionsSelect<true>;
+    exports: ExportsSelect<false> | ExportsSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -111,19 +121,31 @@ export interface Config {
   globals: {
     'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
+    'faq-wp': FaqWp;
     'home-app': HomeApp;
+    'featured-content-app': FeaturedContentApp;
+    'about-tngss-app': AboutTngssApp;
   };
   globalsSelect: {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
+    'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
+    'featured-content-app': FeaturedContentAppSelect<false> | FeaturedContentAppSelect<true>;
+    'about-tngss-app': AboutTngssAppSelect<false> | AboutTngssAppSelect<true>;
   };
   locale: null;
   user: User & {
     collection: 'users';
   };
   jobs: {
-    tasks: unknown;
+    tasks: {
+      createCollectionExport: TaskCreateCollectionExport;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -177,7 +199,7 @@ export interface Speaker {
         id?: string | null;
       }[]
     | null;
-  expertise?: (string | EventTag)[] | null;
+  tags?: (string | Tag)[] | null;
   /**
    * Upload flight details - add as many documents or images as needed
    */
@@ -216,6 +238,11 @@ export interface Speaker {
    * Lower numbers appear first (1 = highest)
    */
   sort_order?: number | null;
+  speaking_events?: {
+    docs?: (string | Event)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -337,9 +364,9 @@ export interface SpeakerType {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "event-tags".
+ * via the `definition` "tags".
  */
-export interface EventTag {
+export interface Tag {
   id: string;
   name: string;
   /**
@@ -405,7 +432,7 @@ export interface Representative {
 export interface Event {
   id: string;
   main_or_partner: 'main_event' | 'partner_event';
-  access_level?: (string | TicketType)[] | null;
+  access_level?: (string | null) | TicketType;
   /**
    * Ensure sponsor logos are embedded in the image, if applicable
    */
@@ -444,7 +471,7 @@ export interface Event {
       }[]
     | null;
   format: string | EventFormat;
-  tags: (string | EventTag)[];
+  tags: (string | Tag)[];
   /**
    * URL-friendly identifier (English only, auto-generated from title)
    */
@@ -651,6 +678,153 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "app-versions".
+ */
+export interface AppVersion {
+  id: string;
+  isCurrentVersion?: boolean | null;
+  version: string;
+  platform: 'ios' | 'android' | 'universal';
+  updateType: 'optional' | 'recommended' | 'force';
+  /**
+   * Users below this version must update
+   */
+  minimumSupportedVersion?: string | null;
+  releaseNotes?: string | null;
+  appStoreUrl?: string | null;
+  playStoreUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports".
+ */
+export interface Export {
+  id: string;
+  name?: string | null;
+  format?: ('csv' | 'json') | null;
+  limit?: number | null;
+  sort?: string | null;
+  drafts?: ('yes' | 'no') | null;
+  selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
+  fields?: string[] | null;
+  collectionSlug: string;
+  where?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: string;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'createCollectionExport';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'createCollectionExport') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -673,8 +847,8 @@ export interface PayloadLockedDocument {
         value: string | EventFormat;
       } | null)
     | ({
-        relationTo: 'event-tags';
-        value: string | EventTag;
+        relationTo: 'tags';
+        value: string | Tag;
       } | null)
     | ({
         relationTo: 'halls';
@@ -711,6 +885,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'documents';
         value: string | Document;
+      } | null)
+    | ({
+        relationTo: 'app-versions';
+        value: string | AppVersion;
+      } | null)
+    | ({
+        relationTo: 'exports';
+        value: string | Export;
+      } | null)
+    | ({
+        relationTo: 'payload-jobs';
+        value: string | PayloadJob;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -784,7 +970,7 @@ export interface SpeakersSelect<T extends boolean = true> {
         lang?: T;
         id?: T;
       };
-  expertise?: T;
+  tags?: T;
   travel_details?:
     | T
     | {
@@ -807,6 +993,7 @@ export interface SpeakersSelect<T extends boolean = true> {
       };
   status?: T;
   sort_order?: T;
+  speaking_events?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -929,9 +1116,9 @@ export interface EventFormatsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "event-tags_select".
+ * via the `definition` "tags_select".
  */
-export interface EventTagsSelect<T extends boolean = true> {
+export interface TagsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   updatedAt?: T;
@@ -1081,6 +1268,79 @@ export interface DocumentsSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "app-versions_select".
+ */
+export interface AppVersionsSelect<T extends boolean = true> {
+  isCurrentVersion?: T;
+  version?: T;
+  platform?: T;
+  updateType?: T;
+  minimumSupportedVersion?: T;
+  releaseNotes?: T;
+  appStoreUrl?: T;
+  playStoreUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports_select".
+ */
+export interface ExportsSelect<T extends boolean = true> {
+  name?: T;
+  format?: T;
+  limit?: T;
+  sort?: T;
+  drafts?: T;
+  selectionToUse?: T;
+  fields?: T;
+  collectionSlug?: T;
+  where?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1242,6 +1502,40 @@ export interface AboutUsWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-wp".
+ */
+export interface FaqWp {
+  id: string;
+  hero?: {
+    title?: string | null;
+    sub_title?: string | null;
+    tagline?: string | null;
+  };
+  faq_blocks?:
+    | {
+        faq_block?: {
+          heading?: string | null;
+          questions_and_answers?:
+            | {
+                question?: string | null;
+                answer?:
+                  | {
+                      paragraph?: string | null;
+                      id?: string | null;
+                    }[]
+                  | null;
+                id?: string | null;
+              }[]
+            | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-app".
  */
 export interface HomeApp {
@@ -1294,6 +1588,150 @@ export interface HomeApp {
    * Enable to include this item in lists, filters, or dropdowns.
    */
   isActive?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featured-content-app".
+ */
+export interface FeaturedContentApp {
+  id: string;
+  featured_events?:
+    | {
+        event?: (string | null) | Event;
+        id?: string | null;
+      }[]
+    | null;
+  featured_speakers?:
+    | {
+        speaker?: (string | null) | Speaker;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-tngss-app".
+ */
+export interface AboutTngssApp {
+  id: string;
+  about_venue?: {
+    content?:
+      | {
+          paragraph?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    cta_label?: string | null;
+    cta_url?: string | null;
+  };
+  faq?: {
+    faq_blocks?:
+      | {
+          faq_block?: {
+            heading?: string | null;
+            questions_and_answers?:
+              | {
+                  question?: string | null;
+                  answer?:
+                    | {
+                        paragraph?: string | null;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  arriving_to_tngss?: {
+    venue_details?: {
+      name?: string | null;
+      full_address?: string | null;
+      map_url?: string | null;
+    };
+    transportation_options?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  contact_us?: {
+    contact_info?:
+      | {
+          label?: string | null;
+          emails?:
+            | {
+                email?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          phone_numbers?:
+            | {
+                phone?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    social_media_links?:
+      | {
+          platform:
+            | 'facebook'
+            | 'twitter'
+            | 'instagram'
+            | 'linkedin'
+            | 'youtube'
+            | 'telegram'
+            | 'whatsapp'
+            | 'discord'
+            | 'website'
+            | 'other';
+          /**
+           * Enter custom platform name when "Other" is selected
+           */
+          platform_custom?: string | null;
+          url: string;
+          /**
+           * e.g., @startuptn for display purposes
+           */
+          handle?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  'staying-in-coimbatore'?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1423,6 +1861,44 @@ export interface AboutUsWpSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-wp_select".
+ */
+export interface FaqWpSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        sub_title?: T;
+        tagline?: T;
+      };
+  faq_blocks?:
+    | T
+    | {
+        faq_block?:
+          | T
+          | {
+              heading?: T;
+              questions_and_answers?:
+                | T
+                | {
+                    question?: T;
+                    answer?:
+                      | T
+                      | {
+                          paragraph?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-app_select".
  */
 export interface HomeAppSelect<T extends boolean = true> {
@@ -1445,6 +1921,147 @@ export interface HomeAppSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featured-content-app_select".
+ */
+export interface FeaturedContentAppSelect<T extends boolean = true> {
+  featured_events?:
+    | T
+    | {
+        event?: T;
+        id?: T;
+      };
+  featured_speakers?:
+    | T
+    | {
+        speaker?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-tngss-app_select".
+ */
+export interface AboutTngssAppSelect<T extends boolean = true> {
+  about_venue?:
+    | T
+    | {
+        content?:
+          | T
+          | {
+              paragraph?: T;
+              id?: T;
+            };
+        cta_label?: T;
+        cta_url?: T;
+      };
+  faq?:
+    | T
+    | {
+        faq_blocks?:
+          | T
+          | {
+              faq_block?:
+                | T
+                | {
+                    heading?: T;
+                    questions_and_answers?:
+                      | T
+                      | {
+                          question?: T;
+                          answer?:
+                            | T
+                            | {
+                                paragraph?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                        };
+                  };
+              id?: T;
+            };
+      };
+  arriving_to_tngss?:
+    | T
+    | {
+        venue_details?:
+          | T
+          | {
+              name?: T;
+              full_address?: T;
+              map_url?: T;
+            };
+        transportation_options?: T;
+      };
+  contact_us?:
+    | T
+    | {
+        contact_info?:
+          | T
+          | {
+              label?: T;
+              emails?:
+                | T
+                | {
+                    email?: T;
+                    id?: T;
+                  };
+              phone_numbers?:
+                | T
+                | {
+                    phone?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        social_media_links?:
+          | T
+          | {
+              platform?: T;
+              platform_custom?: T;
+              url?: T;
+              handle?: T;
+              id?: T;
+            };
+      };
+  'staying-in-coimbatore'?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCreateCollectionExport".
+ */
+export interface TaskCreateCollectionExport {
+  input: {
+    name?: string | null;
+    format?: ('csv' | 'json') | null;
+    limit?: number | null;
+    sort?: string | null;
+    drafts?: ('yes' | 'no') | null;
+    selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
+    fields?: string[] | null;
+    collectionSlug: string;
+    where?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    user?: string | null;
+    userCollection?: string | null;
+    exportsCollection?: string | null;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

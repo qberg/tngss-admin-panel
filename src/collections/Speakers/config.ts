@@ -39,6 +39,8 @@ export const Speakers: CollectionConfig = {
   },
   fields: [
     // Public Frontend Fields
+    //
+
     {
       type: 'collapsible',
       label: '🌍 Public Frontend Data',
@@ -172,14 +174,13 @@ export const Speakers: CollectionConfig = {
             },
           ],
         },
-
         {
-          name: 'expertise',
+          name: 'tags',
           type: 'relationship',
           access: publicFieldAccess,
           hasMany: true,
-          relationTo: 'event-tags',
-          label: 'Expertise',
+          relationTo: 'tags',
+          label: 'Tags',
         },
       ],
     },
@@ -362,6 +363,13 @@ export const Speakers: CollectionConfig = {
         position: 'sidebar',
         description: 'Lower numbers appear first (1 = highest)',
       },
+    },
+
+    {
+      name: 'speaking_events',
+      type: 'join',
+      collection: 'events',
+      on: 'speakers.speaker',
     },
   ],
 }
