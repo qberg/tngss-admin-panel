@@ -33,6 +33,20 @@ export const fcfsSettingsField: Field = {
         },
 
         {
+          name: 'waitlist_capacity',
+          type: 'number',
+          label: 'Waitlist Capacity',
+          defaultValue: 10,
+          admin: {
+            description: 'Maximum capacity of the waitlist',
+            width: '50%',
+            condition: (_, siblingData) => {
+              return siblingData?.enable_waitlist
+            },
+          },
+        },
+
+        {
           name: 'auto_promote_from_waitlist',
           type: 'checkbox',
           label: 'Auto Promote from Waitlist',

@@ -4,6 +4,9 @@ import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
 import { durationField } from '@/fields/duration'
 import { bulkOperationsField } from '@/fields/bulkOperations'
+import { auditFields } from '@/fields/audit'
+import { slugField } from '@/fields/slug'
+import { isPublic } from '@/fields/isPublic'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -29,7 +32,7 @@ export const Speakers: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Speaker Management',
-    defaultColumns: ['name', 'designation', 'assigned_coordinator', 'status'],
+    defaultColumns: ['name', 'designation', 'assigned_coordinator', 'isPublic'],
   },
   access: {
     create: eventManager,
@@ -38,8 +41,21 @@ export const Speakers: CollectionConfig = {
     delete: eventManager,
   },
   fields: [
-    // Public Frontend Fields
-    //
+    slugField,
+    isPublic,
+    {
+      name: 'speaks_at',
+      label: 'Speaks At',
+      type: 'select',
+      hasMany: true,
+      options: [
+        { value: 'main_event', label: 'Main Event' },
+        { value: 'partner_event', label: 'Partner Event' },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
 
     {
       type: 'collapsible',
@@ -59,6 +75,7 @@ export const Speakers: CollectionConfig = {
             description: 'Upload image of the speaker',
           },
         },
+
         {
           type: 'row',
           fields: [
@@ -149,15 +166,61 @@ export const Speakers: CollectionConfig = {
         },
 
         {
+          name: 'experience',
+          type: 'array',
+          label: 'Experience',
+          access: publicFieldAccess,
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'company',
+                  type: 'text',
+                  label: 'Company',
+                },
+
+                {
+                  name: 'area',
+                  type: 'text',
+                  label: 'Area',
+                },
+              ],
+            },
+
+            {
+              name: 'designation',
+              type: 'text',
+              label: 'Designation',
+            },
+          ],
+        },
+
+        {
           name: 'alma_matter',
           type: 'array',
           label: 'Education',
           access: publicFieldAccess,
           fields: [
             {
-              name: 'college',
+              type: 'row',
+              fields: [
+                {
+                  name: 'college',
+                  type: 'text',
+                  label: 'College',
+                },
+                {
+                  name: 'city',
+                  type: 'text',
+                  label: 'City',
+                },
+              ],
+            },
+            {
+              name: 'degree',
               type: 'text',
-              label: 'College',
+              label: 'Degree',
             },
           ],
         },
@@ -371,5 +434,6 @@ export const Speakers: CollectionConfig = {
       collection: 'events',
       on: 'speakers.speaker',
     },
+    auditFields,
   ],
 }

@@ -92,6 +92,9 @@ export interface Config {
     speakers: {
       speaking_events: 'events';
     };
+    halls: {
+      zones: 'zones';
+    };
   };
   collectionsSelect: {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
@@ -121,7 +124,9 @@ export interface Config {
   globals: {
     'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
+    'why-attend-wp': WhyAttendWp;
     'faq-wp': FaqWp;
+    'spons-and-partners-wp': SponsAndPartnersWp;
     'home-app': HomeApp;
     'featured-content-app': FeaturedContentApp;
     'about-tngss-app': AboutTngssApp;
@@ -129,7 +134,9 @@ export interface Config {
   globalsSelect: {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
+    'why-attend-wp': WhyAttendWpSelect<false> | WhyAttendWpSelect<true>;
     'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
+    'spons-and-partners-wp': SponsAndPartnersWpSelect<false> | SponsAndPartnersWpSelect<true>;
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
     'featured-content-app': FeaturedContentAppSelect<false> | FeaturedContentAppSelect<true>;
     'about-tngss-app': AboutTngssAppSelect<false> | AboutTngssAppSelect<true>;
@@ -174,6 +181,15 @@ export interface UserAuthOperations {
 export interface Speaker {
   id: string;
   /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  /**
+   * Enable this to make the content visible to all users (e.g., public website visitors).
+   */
+  isPublic?: boolean | null;
+  speaks_at?: ('main_event' | 'partner_event')[] | null;
+  /**
    * Upload image of the speaker
    */
   profile_image?: (string | null) | Media;
@@ -187,9 +203,19 @@ export interface Speaker {
     country?: string | null;
   };
   summary?: string | null;
+  experience?:
+    | {
+        company?: string | null;
+        area?: string | null;
+        designation?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   alma_matter?:
     | {
         college?: string | null;
+        city?: string | null;
+        degree?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -243,6 +269,24 @@ export interface Speaker {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  'audit-log'?: {
+    /**
+     * User who created this content
+     */
+    createdBy?: (string | null) | User;
+    /**
+     * User who last updated this content
+     */
+    updatedBy?: (string | null) | User;
+    log?: {
+      createdAt?: string | null;
+      updatedAt?: string | null;
+      /**
+       * Document version number
+       */
+      version?: number | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -269,7 +313,26 @@ export interface Media {
     | 'branding'
     | 'social_media'
     | 'press_media'
+    | 'website_content'
     | 'other';
+  'audit-log'?: {
+    /**
+     * User who created this content
+     */
+    createdBy?: (string | null) | User;
+    /**
+     * User who last updated this content
+     */
+    updatedBy?: (string | null) | User;
+    log?: {
+      createdAt?: string | null;
+      updatedAt?: string | null;
+      /**
+       * Document version number
+       */
+      version?: number | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -281,6 +344,45 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * Manage admin panel users and their permissions
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name: string;
+  /**
+   * Admin: Full system access, Event Manager: Manage events and attendees (can create content managers), Content Manager: Manage content of website (cannot create users)
+   */
+  roles: ('admin' | 'event-manager' | 'content-manager' | 'user')[];
+  /**
+   * Suspended users cannot log in to the admin panel
+   */
+  status?: ('active' | 'suspended') | null;
+  /**
+   * Last successful login to admin panel
+   */
+  lastLogin?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
 }
 /**
  * Manage speaker type categories (Domestic, International, etc.)
@@ -431,6 +533,10 @@ export interface Representative {
  */
 export interface Event {
   id: string;
+  /**
+   * Enable this to make the content visible to all users (e.g., public website visitors).
+   */
+  isPublic?: boolean | null;
   main_or_partner: 'main_event' | 'partner_event';
   access_level?: (string | null) | TicketType;
   /**
@@ -456,6 +562,7 @@ export interface Event {
     passcode?: string | null;
     venue: string;
     city: string | City;
+    map_url?: string | null;
   };
   agenda?:
     | {
@@ -477,7 +584,7 @@ export interface Event {
    */
   slug?: string | null;
   /**
-   * How should users register for this event? (Approval mode will be available in future release)
+   * How should users register for this event?
    */
   registeration_mode: 'none' | 'fcfs' | 'approval';
   /**
@@ -506,6 +613,10 @@ export interface Event {
      */
     enable_waitlist?: boolean | null;
     /**
+     * Maximum capacity of the waitlist
+     */
+    waitlist_capacity?: number | null;
+    /**
      * Automatically paromote users when spots become available
      */
     auto_promote_from_waitlist?: boolean | null;
@@ -528,6 +639,24 @@ export interface Event {
    * Updated automatically by registeration service
    */
   current_registerations?: number | null;
+  'audit-log'?: {
+    /**
+     * User who created this content
+     */
+    createdBy?: (string | null) | User;
+    /**
+     * User who last updated this content
+     */
+    updatedBy?: (string | null) | User;
+    log?: {
+      createdAt?: string | null;
+      updatedAt?: string | null;
+      /**
+       * Document version number
+       */
+      version?: number | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -568,6 +697,7 @@ export interface Hall {
   id: string;
   venue: string | Venue;
   name: string;
+  image?: (string | null) | Media;
   /**
    * URL-friendly identifier (English only, auto-generated from name)
    */
@@ -576,6 +706,11 @@ export interface Hall {
    * Number of zones in this hall
    */
   zones_count?: number | null;
+  zones?: {
+    docs?: (string | Zone)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -599,11 +734,13 @@ export interface Venue {
 export interface Zone {
   id: string;
   hall: string | Hall;
+  hex_code?: string | null;
   /**
    * URL-friendly identifier (English only, auto-generated from name)
    */
   slug?: string | null;
   name: string;
+  description?: string | null;
   dimensions?: string | null;
   capacity?: number | null;
   updatedAt: string;
@@ -636,45 +773,6 @@ export interface EventFormat {
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * Manage admin panel users and their permissions
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  name: string;
-  /**
-   * Admin: Full system access, Event Manager: Manage events and attendees (can create content managers), Content Manager: Manage content of website (cannot create users)
-   */
-  roles: ('admin' | 'event-manager' | 'content-manager' | 'user')[];
-  /**
-   * Suspended users cannot log in to the admin panel
-   */
-  status?: ('active' | 'suspended') | null;
-  /**
-   * Last successful login to admin panel
-   */
-  lastLogin?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -945,6 +1043,9 @@ export interface PayloadMigration {
  * via the `definition` "speakers_select".
  */
 export interface SpeakersSelect<T extends boolean = true> {
+  slug?: T;
+  isPublic?: T;
+  speaks_at?: T;
   profile_image?: T;
   name?: T;
   designation?: T;
@@ -958,10 +1059,20 @@ export interface SpeakersSelect<T extends boolean = true> {
         country?: T;
       };
   summary?: T;
+  experience?:
+    | T
+    | {
+        company?: T;
+        area?: T;
+        designation?: T;
+        id?: T;
+      };
   alma_matter?:
     | T
     | {
         college?: T;
+        city?: T;
+        degree?: T;
         id?: T;
       };
   languages?:
@@ -994,6 +1105,19 @@ export interface SpeakersSelect<T extends boolean = true> {
   status?: T;
   sort_order?: T;
   speaking_events?: T;
+  'audit-log'?:
+    | T
+    | {
+        createdBy?: T;
+        updatedBy?: T;
+        log?:
+          | T
+          | {
+              createdAt?: T;
+              updatedAt?: T;
+              version?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1034,6 +1158,7 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
+  isPublic?: T;
   main_or_partner?: T;
   access_level?: T;
   banner_image?: T;
@@ -1057,6 +1182,7 @@ export interface EventsSelect<T extends boolean = true> {
         passcode?: T;
         venue?: T;
         city?: T;
+        map_url?: T;
       };
   agenda?:
     | T
@@ -1086,6 +1212,7 @@ export interface EventsSelect<T extends boolean = true> {
               soft_capacity_warning?: T;
             };
         enable_waitlist?: T;
+        waitlist_capacity?: T;
         auto_promote_from_waitlist?: T;
         registeration?:
           | T
@@ -1101,6 +1228,19 @@ export interface EventsSelect<T extends boolean = true> {
             };
       };
   current_registerations?: T;
+  'audit-log'?:
+    | T
+    | {
+        createdBy?: T;
+        updatedBy?: T;
+        log?:
+          | T
+          | {
+              createdAt?: T;
+              updatedAt?: T;
+              version?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1131,8 +1271,10 @@ export interface TagsSelect<T extends boolean = true> {
 export interface HallsSelect<T extends boolean = true> {
   venue?: T;
   name?: T;
+  image?: T;
   slug?: T;
   zones_count?: T;
+  zones?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1142,8 +1284,10 @@ export interface HallsSelect<T extends boolean = true> {
  */
 export interface ZonesSelect<T extends boolean = true> {
   hall?: T;
+  hex_code?: T;
   slug?: T;
   name?: T;
+  description?: T;
   dimensions?: T;
   capacity?: T;
   updatedAt?: T;
@@ -1238,6 +1382,19 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   mediaType?: T;
+  'audit-log'?:
+    | T
+    | {
+        createdBy?: T;
+        updatedBy?: T;
+        log?:
+          | T
+          | {
+              createdAt?: T;
+              updatedAt?: T;
+              version?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1380,10 +1537,24 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface HomeWp {
   id: string;
-  hero?: {
-    location?: string | null;
-    dates?: string | null;
-    bgVideo?: (string | null) | Media;
+  global_pavilion?: {
+    title?: string | null;
+    description?: string | null;
+    flags?:
+      | {
+          country?: string | null;
+          flag?: (string | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  featured_speakers?: {
+    speakers?:
+      | {
+          speaker?: (string | null) | Speaker;
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1440,6 +1611,18 @@ export interface AboutUsWp {
     title?: string | null;
     description?: string | null;
     image?: (string | null) | Media;
+  };
+  steering_committe?: {
+    title?: string | null;
+    members?:
+      | {
+          name?: string | null;
+          designation?: string | null;
+          organization?: string | null;
+          image?: (string | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
   committe?: {
     title?: string | null;
@@ -1502,6 +1685,40 @@ export interface AboutUsWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-attend-wp".
+ */
+export interface WhyAttendWp {
+  id: string;
+  discover_tn?: {
+    title?: string | null;
+    content?:
+      | {
+          para?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  stakeholders?:
+    | {
+        title?: string | null;
+        sub_title?: string | null;
+        image?: (string | null) | Media;
+        description?: string | null;
+        points?:
+          | {
+              title?: string | null;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-wp".
  */
 export interface FaqWp {
@@ -1536,6 +1753,124 @@ export interface FaqWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spons-and-partners-wp".
+ */
+export interface SponsAndPartnersWp {
+  id: string;
+  sponsors?: {
+    diamond?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    platinum?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    gold?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    silver?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    bronze?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    zone?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the sponsor logo
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  partners?: {
+    partners?: {
+      /**
+       * Header text for this sponsor tier section
+       */
+      header?: string | null;
+      logos?:
+        | {
+            /**
+             * Upload the logo in 200x100 format or similar aspect ratio
+             */
+            logo: string | Media;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-app".
  */
 export interface HomeApp {
@@ -1558,7 +1893,7 @@ export interface HomeApp {
            * Select which screen to navigate to within the app
            */
           internal_route?:
-            | ('events' | 'speakers' | 'profile' | 'exhibition_stalls' | 'product_launch' | 'schedule_meeting')
+            | ('events' | 'SpeakerList' | 'profile' | 'exhibition_stalls' | 'product_launch' | 'schedule_meeting')
             | null;
           /**
            * Optional parameters to pass to the route (JSON format). Example: {"productId": "123", "category": "electronics"}
@@ -1619,12 +1954,21 @@ export interface FeaturedContentApp {
 export interface AboutTngssApp {
   id: string;
   about_venue?: {
-    content?:
-      | {
-          paragraph?: string | null;
-          id?: string | null;
-        }[]
-      | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
     cta_label?: string | null;
     cta_url?: string | null;
   };
@@ -1717,7 +2061,7 @@ export interface AboutTngssApp {
         }[]
       | null;
   };
-  'staying-in-coimbatore'?: {
+  staying_in_coimbatore?: {
     root: {
       type: string;
       children: {
@@ -1732,6 +2076,25 @@ export interface AboutTngssApp {
     };
     [k: string]: unknown;
   } | null;
+  about_startuptn?: {
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    cta_label?: string | null;
+    cta_url?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1740,12 +2103,28 @@ export interface AboutTngssApp {
  * via the `definition` "home-wp_select".
  */
 export interface HomeWpSelect<T extends boolean = true> {
-  hero?:
+  global_pavilion?:
     | T
     | {
-        location?: T;
-        dates?: T;
-        bgVideo?: T;
+        title?: T;
+        description?: T;
+        flags?:
+          | T
+          | {
+              country?: T;
+              flag?: T;
+              id?: T;
+            };
+      };
+  featured_speakers?:
+    | T
+    | {
+        speakers?:
+          | T
+          | {
+              speaker?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1792,6 +2171,20 @@ export interface AboutUsWpSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+      };
+  steering_committe?:
+    | T
+    | {
+        title?: T;
+        members?:
+          | T
+          | {
+              name?: T;
+              designation?: T;
+              organization?: T;
+              image?: T;
+              id?: T;
+            };
       };
   committe?:
     | T
@@ -1861,6 +2254,42 @@ export interface AboutUsWpSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-attend-wp_select".
+ */
+export interface WhyAttendWpSelect<T extends boolean = true> {
+  discover_tn?:
+    | T
+    | {
+        title?: T;
+        content?:
+          | T
+          | {
+              para?: T;
+              id?: T;
+            };
+      };
+  stakeholders?:
+    | T
+    | {
+        title?: T;
+        sub_title?: T;
+        image?: T;
+        description?: T;
+        points?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-wp_select".
  */
 export interface FaqWpSelect<T extends boolean = true> {
@@ -1892,6 +2321,100 @@ export interface FaqWpSelect<T extends boolean = true> {
                   };
             };
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spons-and-partners-wp_select".
+ */
+export interface SponsAndPartnersWpSelect<T extends boolean = true> {
+  sponsors?:
+    | T
+    | {
+        diamond?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+        platinum?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+        gold?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+        silver?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+        bronze?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+        zone?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
+      };
+  partners?:
+    | T
+    | {
+        partners?:
+          | T
+          | {
+              header?: T;
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    id?: T;
+                  };
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1951,12 +2474,7 @@ export interface AboutTngssAppSelect<T extends boolean = true> {
   about_venue?:
     | T
     | {
-        content?:
-          | T
-          | {
-              paragraph?: T;
-              id?: T;
-            };
+        content?: T;
         cta_label?: T;
         cta_url?: T;
       };
@@ -2029,7 +2547,14 @@ export interface AboutTngssAppSelect<T extends boolean = true> {
               id?: T;
             };
       };
-  'staying-in-coimbatore'?: T;
+  staying_in_coimbatore?: T;
+  about_startuptn?:
+    | T
+    | {
+        content?: T;
+        cta_label?: T;
+        cta_url?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

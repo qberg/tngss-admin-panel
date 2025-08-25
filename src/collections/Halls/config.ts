@@ -34,6 +34,12 @@ export const Halls: CollectionConfig = {
       label: 'Name of the Hall',
       required: true,
     },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Hall Photo',
+    },
     slugField,
     {
       name: 'zones_count',
@@ -61,6 +67,13 @@ export const Halls: CollectionConfig = {
           },
         ],
       },
+    },
+
+    {
+      name: 'zones',
+      type: 'join',
+      collection: 'zones',
+      on: 'hall',
     },
   ],
 }

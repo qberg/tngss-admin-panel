@@ -30,6 +30,8 @@ import { FaqWebPage } from './globals/FaqWebPage/config'
 import { AppVersions } from './collections/AppVersions/config'
 import { FeaturedContentApp } from './globals/FeaturedContentApp/config'
 import { AboutTNGSSApp } from './globals/AboutTNGSSApp/config'
+import { WhyAttendWebPage } from './globals/WhyAttendWebPage/config'
+import { SponsAndPartnersWebPage } from './globals/SponsAndPartnersWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -75,7 +77,9 @@ export default buildConfig({
   globals: [
     HomeWebPage,
     AboutUsWebPage,
+    WhyAttendWebPage,
     FaqWebPage,
+    SponsAndPartnersWebPage,
     HomeAppPage,
     FeaturedContentApp,
     AboutTNGSSApp,

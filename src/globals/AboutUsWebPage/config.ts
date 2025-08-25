@@ -156,6 +156,60 @@ export const AboutUsWebPage: GlobalConfig = {
         {
           fields: [
             {
+              name: 'steering_committe',
+              type: 'group',
+              label: 'Steering Committee',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                },
+
+                {
+                  name: 'members',
+                  type: 'array',
+                  admin: {
+                    isSortable: true,
+                  },
+                  fields: [
+                    {
+                      type: 'row',
+                      fields: [
+                        {
+                          name: 'name',
+                          type: 'text',
+                          label: 'Name',
+                        },
+                        {
+                          name: 'designation',
+                          type: 'text',
+                          label: 'Designation',
+                        },
+                        {
+                          name: 'organization',
+                          type: 'text',
+                          label: 'organization',
+                        },
+                      ],
+                    },
+
+                    {
+                      name: 'image',
+                      type: 'upload',
+                      relationTo: 'media',
+                      label: 'Profile Picture',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          label: 'Steering Committe',
+        },
+        {
+          fields: [
+            {
               name: 'committe',
               type: 'group',
               fields: [

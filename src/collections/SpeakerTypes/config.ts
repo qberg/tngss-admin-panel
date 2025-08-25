@@ -3,6 +3,7 @@ import { eventManager } from '../Users/access/eventManager'
 import { user } from '../Users/access/user'
 import { slugField } from '@/fields/slug'
 import { isActive } from '@/fields/isActive'
+import { anyone } from '../Users/access/anyone'
 
 export const SpeakerTypes: CollectionConfig = {
   slug: 'speaker-types',
@@ -17,7 +18,7 @@ export const SpeakerTypes: CollectionConfig = {
     description: 'Manage speaker type categories (Domestic, International, etc.)',
   },
   access: {
-    read: user,
+    read: anyone,
     create: eventManager,
     update: eventManager,
     delete: eventManager,

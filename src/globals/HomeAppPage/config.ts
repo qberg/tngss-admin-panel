@@ -74,7 +74,7 @@ export const HomeAppPage: GlobalConfig = {
                 },
                 {
                   label: 'Speakers',
-                  value: 'speakers',
+                  value: 'SpeakerList',
                 },
                 {
                   label: 'Profile',

@@ -19,57 +19,53 @@ export const HomeWebPage: GlobalConfig = {
         {
           fields: [
             {
-              name: 'hero',
-              type: 'group',
+              name: 'title',
+              type: 'text',
+              label: 'Title',
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              label: 'Description',
+            },
+            {
+              name: 'flags',
+              type: 'array',
+              label: 'Flags',
               fields: [
                 {
-                  name: 'location',
+                  name: 'country',
                   type: 'text',
-                  label: 'Location',
+                  label: 'Country',
                 },
                 {
-                  name: 'dates',
-                  type: 'text',
-                  label: 'Dates',
-                },
-                {
-                  name: 'bgVideo',
+                  name: 'flag',
                   type: 'upload',
                   relationTo: 'media',
-                  label: 'Background Video',
                 },
               ],
             },
           ],
-          label: 'Hero Section',
+          name: 'global_pavilion',
+          label: 'Global Pavilion',
         },
+
         {
-          fields: [],
-          label: 'CM Section',
-        },
-        {
-          fields: [],
-          label: 'Stats Section',
-        },
-        {
-          fields: [],
-          label: 'Why Attend Section',
-        },
-        {
-          fields: [],
-          label: 'Speakers Ssection',
-        },
-        {
-          fields: [],
-          label: 'Showcase Section',
-        },
-        {
-          fields: [],
-          label: 'Past Engagements Section',
-        },
-        {
-          fields: [],
-          label: 'Key Highlights Section',
+          name: 'featured_speakers',
+          label: 'Featured Speakers',
+          fields: [
+            {
+              type: 'array',
+              name: 'speakers',
+              fields: [
+                {
+                  name: 'speaker',
+                  type: 'relationship',
+                  relationTo: 'speakers',
+                },
+              ],
+            },
+          ],
         },
       ],
     },

@@ -31,12 +31,26 @@ export const Zones: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'hex_code',
+      type: 'text',
+      admin: {
+        placeholder: '#17BFDB',
+        position: 'sidebar',
+      },
+      label: 'Hex Code',
+    },
     slugField,
     {
       name: 'name',
       type: 'text',
       required: true,
       label: 'Name of the Zone',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: 'Description',
     },
     {
       name: 'dimensions',

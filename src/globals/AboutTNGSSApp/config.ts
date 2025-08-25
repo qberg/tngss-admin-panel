@@ -9,6 +9,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 import type { GlobalConfig } from 'payload'
 
 export const AboutTNGSSApp: GlobalConfig = {
@@ -29,15 +30,21 @@ export const AboutTNGSSApp: GlobalConfig = {
       fields: [
         {
           name: 'content',
-          type: 'array',
-          label: 'Content Paragraphs',
-          fields: [
-            {
-              name: 'paragraph',
-              type: 'textarea',
-              label: 'Paragraph',
+          type: 'richText',
+          label: 'About the Venue',
+
+          editor: lexicalEditor({
+            features: ({ rootFeatures }) => {
+              return [
+                ...rootFeatures,
+                HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                FixedToolbarFeature(),
+                InlineToolbarFeature(),
+                HorizontalRuleFeature(),
+                SlateToLexicalFeature({}),
+              ]
             },
-          ],
+          }),
         },
 
         {
@@ -176,7 +183,7 @@ export const AboutTNGSSApp: GlobalConfig = {
     },
 
     {
-      name: 'staying-in-coimbatore',
+      name: 'staying_in_coimbatore',
       type: 'richText',
       label: 'Staying In Coimbatore',
       editor: lexicalEditor({
@@ -190,6 +197,49 @@ export const AboutTNGSSApp: GlobalConfig = {
           ]
         },
       }),
+    },
+
+    {
+      type: 'group',
+      name: 'about_startuptn',
+      label: 'About StartupTN',
+      fields: [
+        {
+          name: 'content',
+          type: 'richText',
+          label: 'About StartupTN',
+
+          editor: lexicalEditor({
+            features: ({ rootFeatures }) => {
+              return [
+                ...rootFeatures,
+                HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                FixedToolbarFeature(),
+                InlineToolbarFeature(),
+                HorizontalRuleFeature(),
+                SlateToLexicalFeature({}),
+              ]
+            },
+          }),
+        },
+
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'cta_label',
+              type: 'text',
+              label: 'Cta Label',
+            },
+
+            {
+              name: 'cta_url',
+              type: 'text',
+              label: 'Cta URL',
+            },
+          ],
+        },
+      ],
     },
   ],
 }

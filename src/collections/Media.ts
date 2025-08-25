@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from './Users/access/anyone'
 import { contentManager } from './Users/access/contentManager'
 import { eventManager } from './Users/access/eventManager'
+import { auditFields } from '@/fields/audit'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -67,6 +68,10 @@ export const Media: CollectionConfig = {
           value: 'press_media',
         },
         {
+          label: '🌐 Website Content',
+          value: 'website_content',
+        },
+        {
           label: '📁 Other',
           value: 'other',
         },
@@ -77,6 +82,8 @@ export const Media: CollectionConfig = {
         position: 'sidebar',
       },
     },
+
+    auditFields,
   ],
   upload: {
     mimeTypes: [
@@ -87,7 +94,6 @@ export const Media: CollectionConfig = {
       'image/gif',
       'image/webp',
       'image/svg+xml',
-
       // Videos
       'video/mp4',
       'video/quicktime',
@@ -95,6 +101,26 @@ export const Media: CollectionConfig = {
       'video/webm',
       'video/mpeg',
       'video/ogg',
+    ],
+  },
+  hooks: {
+    beforeChange: [
+      ({ data, req }) => {
+        if (req.file && req.file.name) {
+          const sanitizedName = req.file.name
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9.\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-+|-+$/g, '')
+
+          if (sanitizedName) {
+            data.filename = sanitizedName
+          }
+        }
+        return data
+      },
     ],
   },
 }
