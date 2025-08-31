@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 export const EventRegistrationsSample: CollectionConfig = {
-  slug: 'event_registrations', // Match your MongoDB collection name exactly
+  slug: 'event_registrations',
   labels: {
     singular: 'Event Registration',
     plural: 'Event Registrations',
@@ -20,8 +20,7 @@ export const EventRegistrationsSample: CollectionConfig = {
   fields: [
     {
       name: 'user_id',
-      type: 'relationship',
-      relationTo: 'users-sample',
+      type: 'text',
       label: 'User',
       admin: {
         description: 'User who made this registration',

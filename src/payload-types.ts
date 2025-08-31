@@ -544,6 +544,16 @@ export interface Event {
   isPublic?: boolean | null;
   main_or_partner: 'main_event' | 'partner_event';
   access_level?: (string | null) | TicketType;
+  format: string | EventFormat;
+  tags: (string | Tag)[];
+  /**
+   * Updated automatically by registration service
+   */
+  current_registerations?: number | null;
+  /**
+   * URL-friendly identifier (English only, auto-generated from title)
+   */
+  slug?: string | null;
   /**
    * Ensure sponsor logos are embedded in the image, if applicable
    */
@@ -582,12 +592,6 @@ export interface Event {
         id?: string | null;
       }[]
     | null;
-  format: string | EventFormat;
-  tags: (string | Tag)[];
-  /**
-   * URL-friendly identifier (English only, auto-generated from title)
-   */
-  slug?: string | null;
   /**
    * How should users register for this event?
    */
@@ -640,10 +644,6 @@ export interface Event {
       auto_close_registeration_at?: number | null;
     };
   };
-  /**
-   * Updated automatically by registeration service
-   */
-  current_registerations?: number | null;
   'audit-log'?: {
     /**
      * User who created this content
@@ -682,6 +682,20 @@ export interface TicketType {
      */
     vendorTicketTypeId?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-formats".
+ */
+export interface EventFormat {
+  id: string;
+  name?: string | null;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -749,20 +763,6 @@ export interface Zone {
 export interface City {
   id: string;
   name: string;
-  /**
-   * URL-friendly identifier (English only, auto-generated from name)
-   */
-  slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "event-formats".
- */
-export interface EventFormat {
-  id: string;
-  name?: string | null;
   /**
    * URL-friendly identifier (English only, auto-generated from name)
    */
@@ -1253,6 +1253,10 @@ export interface EventsSelect<T extends boolean = true> {
   isPublic?: T;
   main_or_partner?: T;
   access_level?: T;
+  format?: T;
+  tags?: T;
+  current_registerations?: T;
+  slug?: T;
   banner_image?: T;
   title?: T;
   about?: T;
@@ -1289,9 +1293,6 @@ export interface EventsSelect<T extends boolean = true> {
         speaker?: T;
         id?: T;
       };
-  format?: T;
-  tags?: T;
-  slug?: T;
   registeration_mode?: T;
   fcfs_settings?:
     | T
@@ -1319,7 +1320,6 @@ export interface EventsSelect<T extends boolean = true> {
               auto_close_registeration_at?: T;
             };
       };
-  current_registerations?: T;
   'audit-log'?:
     | T
     | {
