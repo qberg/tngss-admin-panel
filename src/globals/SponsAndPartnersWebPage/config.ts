@@ -4,12 +4,11 @@ import { createSponsorField } from '@/fields/sponsorField'
 import type { GlobalConfig } from 'payload'
 
 const sponsorTiers = [
-  { name: 'diamond', label: 'Diamond Sponsor', format: '450x300' },
-  { name: 'platinum', label: 'Platinum Sponsor', format: '400x250' },
-  { name: 'gold', label: 'Gold Sponsor', format: '350x200' },
-  { name: 'silver', label: 'Silver Sponsor', format: '300x150' },
-  { name: 'bronze', label: 'Bronze Sponsor', format: '250x125' },
-  { name: 'zone', label: 'Zone Sponsor', format: '200x100' },
+  { name: 'diamond', label: 'Diamond Sponsor', format: '420x250' },
+  { name: 'platinum', label: 'Platinum Sponsor', format: '380x200' },
+  { name: 'gold', label: 'Gold Sponsor', format: '340x180' },
+  { name: 'silver', label: 'Silver Sponsor', format: '240x125' },
+  { name: 'bronze', label: 'Bronze Sponsor', format: '220x105' },
 ]
 
 export const SponsAndPartnersWebPage: GlobalConfig = {
@@ -27,7 +26,10 @@ export const SponsAndPartnersWebPage: GlobalConfig = {
       type: 'tabs',
       tabs: [
         {
-          fields: sponsorTiers.map((tier) => createSponsorField(tier.name, tier.label)),
+          fields: [
+            ...sponsorTiers.map((tier) => createSponsorField(tier.name, tier.label, tier.format)),
+            createSponsorField('other', 'Other Sponsor Tiers', '200x90', true),
+          ],
           name: 'sponsors',
           label: 'Sponsors',
         },
@@ -35,7 +37,7 @@ export const SponsAndPartnersWebPage: GlobalConfig = {
         {
           name: 'partners',
           label: 'Partners',
-          fields: [createSponsorField('partners', 'Partners', '200x100')],
+          fields: [createSponsorField('partners', 'Partners', '200x90', true)],
         },
       ],
     },

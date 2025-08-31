@@ -76,6 +76,7 @@ export interface Config {
     zones: Zone;
     venues: Venue;
     cities: City;
+    tickets: Ticket;
     'ticket-types': TicketType;
     representatives: Representative;
     users: User;
@@ -106,6 +107,7 @@ export interface Config {
     zones: ZonesSelect<false> | ZonesSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
+    tickets: TicketsSelect<false> | TicketsSelect<true>;
     'ticket-types': TicketTypesSelect<false> | TicketTypesSelect<true>;
     representatives: RepresentativesSelect<false> | RepresentativesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -125,6 +127,7 @@ export interface Config {
     'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
     'why-attend-wp': WhyAttendWp;
+    'tickets-info-wp': TicketsInfoWp;
     'faq-wp': FaqWp;
     'spons-and-partners-wp': SponsAndPartnersWp;
     'home-app': HomeApp;
@@ -135,6 +138,7 @@ export interface Config {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
     'why-attend-wp': WhyAttendWpSelect<false> | WhyAttendWpSelect<true>;
+    'tickets-info-wp': TicketsInfoWpSelect<false> | TicketsInfoWpSelect<true>;
     'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
     'spons-and-partners-wp': SponsAndPartnersWpSelect<false> | SponsAndPartnersWpSelect<true>;
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
@@ -308,6 +312,7 @@ export interface Media {
     | 'event_images'
     | 'event_videos'
     | 'marketing_assets'
+    | 'sponsorship'
     | 'venue_photos'
     | 'presentation_media'
     | 'branding'
@@ -411,7 +416,7 @@ export interface SpeakerType {
   /**
    * Order in which this appears in dropdowns (lower = first)
    */
-  sortOrder?: number | null;
+  sort_order?: number | null;
   /**
    * Whether speakers of this type typically need visa documents
    */
@@ -671,15 +676,6 @@ export interface TicketType {
    * URL-friendly identifier (English only, auto-generated from name)
    */
   slug?: string | null;
-  /**
-   * List of benefits included with this ticket type
-   */
-  features?:
-    | {
-        feature: string;
-        id?: string | null;
-      }[]
-    | null;
   external_integration?: {
     /**
      * Reference ID in kamelon ticketing system
@@ -771,6 +767,98 @@ export interface EventFormat {
    * URL-friendly identifier (English only, auto-generated from name)
    */
   slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tickets".
+ */
+export interface Ticket {
+  id: string;
+  /**
+   * URL-friendly identifier (English only, auto-generated from name)
+   */
+  slug?: string | null;
+  /**
+   * Enable this to make the content visible to all users (e.g., public website visitors).
+   */
+  isPublic?: boolean | null;
+  name?: string | null;
+  description?: string | null;
+  badge_text?: string | null;
+  pricing?: {
+    is_free?: boolean | null;
+    /**
+     * Enable this to offer discounted prices alongside regular pricing
+     */
+    has_discount?: boolean | null;
+    discount_info?: {
+      /**
+       * Text to display about when discount pricing ends
+       */
+      discount_text?: string | null;
+    };
+    /**
+     * The primary currency for this ticket
+     */
+    base_currency?: ('INR' | 'USD' | 'EUR' | 'GBP' | 'CAD' | 'AUD' | 'SGD' | 'JPY') | null;
+    /**
+     * Add prices for different currencies
+     */
+    currency_prices?:
+      | {
+          currency: 'INR' | 'USD' | 'EUR' | 'GBP' | 'CAD' | 'AUD' | 'SGD' | 'JPY';
+          actual_price: number;
+          /**
+           * Optional discounted price (must be less than regular price)
+           */
+          discounted_price?: number | null;
+          unit?: string | null;
+          gst?: {
+            tax_applicable?: boolean | null;
+            tax_rate?: number | null;
+            tax_inclusive?: boolean | null;
+            tax_code?: string | null;
+            tax_label?: string | null;
+          };
+          currency_notes?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    pricing_notes?: string | null;
+  };
+  /**
+   * Automatically show pricing in user's local currency based on browser settings
+   */
+  auto_currency_detection?: boolean | null;
+  /**
+   * List of benefits included with this ticket type
+   */
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  'audit-log'?: {
+    /**
+     * User who created this content
+     */
+    createdBy?: (string | null) | User;
+    /**
+     * User who last updated this content
+     */
+    updatedBy?: (string | null) | User;
+    log?: {
+      createdAt?: string | null;
+      updatedAt?: string | null;
+      /**
+       * Document version number
+       */
+      version?: number | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -965,6 +1053,10 @@ export interface PayloadLockedDocument {
         value: string | City;
       } | null)
     | ({
+        relationTo: 'tickets';
+        value: string | Ticket;
+      } | null)
+    | ({
         relationTo: 'ticket-types';
         value: string | TicketType;
       } | null)
@@ -1130,7 +1222,7 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   isActive?: T;
-  sortOrder?: T;
+  sort_order?: T;
   requiresVisa?: T;
   defaultAccommodation?: T;
   averageBudget?:
@@ -1317,17 +1409,76 @@ export interface CitiesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ticket-types_select".
+ * via the `definition` "tickets_select".
  */
-export interface TicketTypesSelect<T extends boolean = true> {
-  name?: T;
+export interface TicketsSelect<T extends boolean = true> {
   slug?: T;
+  isPublic?: T;
+  name?: T;
+  description?: T;
+  badge_text?: T;
+  pricing?:
+    | T
+    | {
+        is_free?: T;
+        has_discount?: T;
+        discount_info?:
+          | T
+          | {
+              discount_text?: T;
+            };
+        base_currency?: T;
+        currency_prices?:
+          | T
+          | {
+              currency?: T;
+              actual_price?: T;
+              discounted_price?: T;
+              unit?: T;
+              gst?:
+                | T
+                | {
+                    tax_applicable?: T;
+                    tax_rate?: T;
+                    tax_inclusive?: T;
+                    tax_code?: T;
+                    tax_label?: T;
+                  };
+              currency_notes?: T;
+              id?: T;
+            };
+        pricing_notes?: T;
+      };
+  auto_currency_detection?: T;
   features?:
     | T
     | {
         feature?: T;
         id?: T;
       };
+  'audit-log'?:
+    | T
+    | {
+        createdBy?: T;
+        updatedBy?: T;
+        log?:
+          | T
+          | {
+              createdAt?: T;
+              updatedAt?: T;
+              version?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ticket-types_select".
+ */
+export interface TicketTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
   external_integration?:
     | T
     | {
@@ -1719,6 +1870,43 @@ export interface WhyAttendWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tickets-info-wp".
+ */
+export interface TicketsInfoWp {
+  id: string;
+  section_headers?: {
+    pass_headers?: {
+      title?: string | null;
+      description?: string | null;
+    };
+    exhibitor_headers?: {
+      title?: string | null;
+      description?: string | null;
+    };
+  };
+  guidelines?: {
+    guidelines?:
+      | {
+          name?: string | null;
+          points?:
+            | {
+                point?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tickets are a seperate collection, manage them over there
+   */
+  tickets?: {};
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-wp".
  */
 export interface FaqWp {
@@ -1766,9 +1954,10 @@ export interface SponsAndPartnersWp {
       logos?:
         | {
             /**
-             * Upload the sponsor logo
+             * Upload the logo in 420x250 format or similar aspect ratio without any white background
              */
             logo: string | Media;
+            url?: string | null;
             id?: string | null;
           }[]
         | null;
@@ -1781,9 +1970,10 @@ export interface SponsAndPartnersWp {
       logos?:
         | {
             /**
-             * Upload the sponsor logo
+             * Upload the logo in 380x200 format or similar aspect ratio without any white background
              */
             logo: string | Media;
+            url?: string | null;
             id?: string | null;
           }[]
         | null;
@@ -1796,9 +1986,10 @@ export interface SponsAndPartnersWp {
       logos?:
         | {
             /**
-             * Upload the sponsor logo
+             * Upload the logo in 340x180 format or similar aspect ratio without any white background
              */
             logo: string | Media;
+            url?: string | null;
             id?: string | null;
           }[]
         | null;
@@ -1811,9 +2002,10 @@ export interface SponsAndPartnersWp {
       logos?:
         | {
             /**
-             * Upload the sponsor logo
+             * Upload the logo in 240x125 format or similar aspect ratio without any white background
              */
             logo: string | Media;
+            url?: string | null;
             id?: string | null;
           }[]
         | null;
@@ -1826,45 +2018,54 @@ export interface SponsAndPartnersWp {
       logos?:
         | {
             /**
-             * Upload the sponsor logo
+             * Upload the logo in 220x105 format or similar aspect ratio without any white background
              */
             logo: string | Media;
+            url?: string | null;
             id?: string | null;
           }[]
         | null;
     };
-    zone?: {
-      /**
-       * Header text for this sponsor tier section
-       */
-      header?: string | null;
-      logos?:
-        | {
-            /**
-             * Upload the sponsor logo
-             */
-            logo: string | Media;
-            id?: string | null;
-          }[]
-        | null;
-    };
+    other?:
+      | {
+          /**
+           * Header text for this sponsor tier section
+           */
+          header?: string | null;
+          logos?:
+            | {
+                /**
+                 * Upload the logo in 200x90 format or similar aspect ratio without any white background
+                 */
+                logo: string | Media;
+                url?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   partners?: {
-    partners?: {
-      /**
-       * Header text for this sponsor tier section
-       */
-      header?: string | null;
-      logos?:
-        | {
-            /**
-             * Upload the logo in 200x100 format or similar aspect ratio
-             */
-            logo: string | Media;
-            id?: string | null;
-          }[]
-        | null;
-    };
+    partners?:
+      | {
+          /**
+           * Header text for this sponsor tier section
+           */
+          header?: string | null;
+          logos?:
+            | {
+                /**
+                 * Upload the logo in 200x90 format or similar aspect ratio without any white background
+                 */
+                logo: string | Media;
+                url?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2290,6 +2491,48 @@ export interface WhyAttendWpSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tickets-info-wp_select".
+ */
+export interface TicketsInfoWpSelect<T extends boolean = true> {
+  section_headers?:
+    | T
+    | {
+        pass_headers?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+            };
+        exhibitor_headers?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+            };
+      };
+  guidelines?:
+    | T
+    | {
+        guidelines?:
+          | T
+          | {
+              name?: T;
+              points?:
+                | T
+                | {
+                    point?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  tickets?: T | {};
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq-wp_select".
  */
 export interface FaqWpSelect<T extends boolean = true> {
@@ -2342,6 +2585,7 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
             };
@@ -2353,6 +2597,7 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
             };
@@ -2364,6 +2609,7 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
             };
@@ -2375,6 +2621,7 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
             };
@@ -2386,10 +2633,11 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
             };
-        zone?:
+        other?:
           | T
           | {
               header?: T;
@@ -2397,8 +2645,10 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
+              id?: T;
             };
       };
   partners?:
@@ -2412,8 +2662,10 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                 | T
                 | {
                     logo?: T;
+                    url?: T;
                     id?: T;
                   };
+              id?: T;
             };
       };
   updatedAt?: T;

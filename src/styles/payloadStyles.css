@@ -13,8 +13,8 @@
   --theme-blue: #0055ff;
   --theme-green: #18bfdb;
 
-  --theme-elevation-100: var(--theme-green);
   --theme-elevation-200: color-mix(in srgb, var(--theme-green) 50%, transparent);
+  --theme-elevation-300: var(--theme-green);
 }
 
 :root[data-theme='dark'] {
@@ -23,6 +23,10 @@
 
 .card__title {
   color: var(--theme-orange);
+}
+
+.button-bg {
+  color: var(--theme-blue);
 }
 
 h1 {

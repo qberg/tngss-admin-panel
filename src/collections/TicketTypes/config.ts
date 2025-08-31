@@ -1,25 +1,21 @@
 import type { CollectionConfig } from 'payload'
 import { admin } from '../Users/access/admin'
-import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
+import { anyone } from '../Users/access/anyone'
 import { slugField } from '@/fields/slug'
 import { eventManager, eventManagerFieldAccess } from '../Users/access/eventManager'
 import { userFieldAccess } from '../Users/access/user'
-
-const publicFieldAccess = {
-  read: anyoneFieldAcess,
-  update: eventManagerFieldAccess,
-}
 
 const adminFieldAccess = {
   read: userFieldAccess,
   update: eventManagerFieldAccess,
 }
 
+// for legacy reasons aka my fuckup i am jugaading it to Access Level Label
 export const TicketTypes: CollectionConfig = {
   slug: 'ticket-types',
   labels: {
-    singular: 'Ticket Type',
-    plural: 'Ticket Types',
+    singular: 'Access Type',
+    plural: 'Access Types',
   },
   access: {
     create: admin,
@@ -38,26 +34,6 @@ export const TicketTypes: CollectionConfig = {
       label: 'Ticket type Name',
     },
     slugField,
-
-    {
-      name: 'features',
-      label: 'Included Features',
-      type: 'array',
-      access: publicFieldAccess,
-      fields: [
-        {
-          name: 'feature',
-          type: 'text',
-          required: true,
-          admin: {
-            placeholder: 'Access to all sessions, Premium lunch, Networking dinner',
-          },
-        },
-      ],
-      admin: {
-        description: 'List of benefits included with this ticket type',
-      },
-    },
 
     {
       name: 'external_integration',

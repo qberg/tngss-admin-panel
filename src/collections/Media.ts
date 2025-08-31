@@ -47,6 +47,11 @@ export const Media: CollectionConfig = {
           label: '📈 Marketing Assets',
           value: 'marketing_assets',
         },
+
+        {
+          label: '🤝 Sponsorship',
+          value: 'sponsorship',
+        },
         {
           label: '🏢 Venue Photos',
           value: 'venue_photos',

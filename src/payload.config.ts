@@ -32,6 +32,8 @@ import { FeaturedContentApp } from './globals/FeaturedContentApp/config'
 import { AboutTNGSSApp } from './globals/AboutTNGSSApp/config'
 import { WhyAttendWebPage } from './globals/WhyAttendWebPage/config'
 import { SponsAndPartnersWebPage } from './globals/SponsAndPartnersWebPage/config'
+import { Tickets } from './collections/Tickets/config'
+import { TicketsInfoWebPage } from './globals/TicketsInfoWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,6 +73,9 @@ export default buildConfig({
     // Production domains
     'https://dev.tngss.startuptn.in',
     'https://tngss.startuptn.in',
+    'https://www.tngss.startuptn.in',
+    'https://tngss.in',
+    'https://www.tngss.in',
     '*',
   ],
 
@@ -78,6 +83,7 @@ export default buildConfig({
     HomeWebPage,
     AboutUsWebPage,
     WhyAttendWebPage,
+    TicketsInfoWebPage,
     FaqWebPage,
     SponsAndPartnersWebPage,
     HomeAppPage,
@@ -94,6 +100,7 @@ export default buildConfig({
     Zones,
     Veneues,
     Cities,
+    Tickets,
     TicketTypes,
     Representatives,
     Users,

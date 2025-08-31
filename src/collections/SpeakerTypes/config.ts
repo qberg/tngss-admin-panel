@@ -1,6 +1,5 @@
 import { CollectionConfig } from 'payload'
 import { eventManager } from '../Users/access/eventManager'
-import { user } from '../Users/access/user'
 import { slugField } from '@/fields/slug'
 import { isActive } from '@/fields/isActive'
 import { anyone } from '../Users/access/anyone'
@@ -51,7 +50,7 @@ export const SpeakerTypes: CollectionConfig = {
       fields: [
         isActive,
         {
-          name: 'sortOrder',
+          name: 'sort_order',
           label: 'Sort Order',
           type: 'number',
           defaultValue: 100,

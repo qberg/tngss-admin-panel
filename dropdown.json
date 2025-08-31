@@ -1,0 +1,133 @@
+[
+  {
+    "name": "organisationType",
+    "label": "Organisation Type",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Startup", "value": "startup" },
+      { "label": "Aspirant / Individual", "value": "aspirants_individuals" },
+      { "label": "Ecosystem Enabler", "value": "ecosystem_enablers" },
+      {
+        "label": "Incubation & Acceleration",
+        "value": "incubation_acceleration"
+      },
+      { "label": "Investor", "value": "investors" },
+      { "label": "Mentor", "value": "mentor_sme" },
+      {
+        "label": "Ecosystem Service Provider",
+        "value": "ecosystem_service_provider"
+      }
+    ]
+  },
+  {
+    "name": "profileType",
+    "label": "Profile Type",
+    "type": "select",
+    "required": true,
+    "dynamicOptions": {
+      "dependsOn": "organisationType",
+      "optionsMap": {
+        "startup": [
+          { "label": "DPIIT", "value": "dpii" },
+          { "label": "Non DPIIT", "value": "non_dpiit" }
+        ],
+        "aspirants_individuals": [
+          { "label": "College Students", "value": "college_student" },
+          { "label": "Working Professionals", "value": "working_professional" },
+          { "label": "Business Owners", "value": "business_owner" },
+          { "label": "Research Scholars", "value": "research_scholar" }
+        ],
+        "ecosystem_enablers": [
+          { "label": "Educational Institutions", "value": "educational_institutions" },
+          { "label": "Corporates", "value": "corporates" },
+          { "label": "Business & Social Forums", "value": "business_social_forums" },
+          { "label": "Startup Communities", "value": "startup_communities" },
+          { "label": "NGOs", "value": "ngos" },
+          { "label": "Banks", "value": "banks" },
+          { "label": "Media Agencies", "value": "media_agencies" },
+          { "label": "R&D Agencies", "value": "rd_agencies" }
+        ],
+        "incubation_acceleration": [
+          { "label": "Incubators", "value": "incubators" },
+          { "label": "Accelerators", "value": "accelerators" }
+        ],
+        "investors": [
+          { "label": "Angel Investors", "value": "angel_investors" },
+          { "label": "Venture Capitalists (VCs)", "value": "venture_capitalists" },
+          { "label": "Private Equity (PE) Firms", "value": "private_equity_firms" },
+          { "label": "Corporate Investors", "value": "corporate_investors" },
+          { "label": "Family Offices", "value": "family_offices" },
+          { "label": "Revenue Based Financing/Venture Debt", "value": "revenue_based_financing" }
+        ],
+        "mentor_sme": [
+          { "label": "Mentor", "value": "mentor" },
+          { "label": "Subject Matter Expert", "value": "subject_matter_expert" }
+        ],
+        "ecosystem_service_provider": [
+          { "label": "Legal & Compliance Services", "value": "legal_compliance_services" },
+          { "label": "Coworking Space", "value": "coworking_space" },
+          { "label": "Consulting and Advisory Services", "value": "consulting_advisory_services" },
+          { "label": "Makerspace", "value": "makerspace" },
+          { "label": "Financial Services", "value": "financial_services" },
+          { "label": "Technology Services", "value": "technology_services" },
+          { "label": "Marketing and Branding Services", "value": "marketing_branding_services" }
+        ]
+      }
+    }
+  },
+  {
+    "name": "sectorIntrested",
+    "label": "Sector",
+    "placeholder": "Enter sectors of interest",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Sector Agnostic", "value": "sector_agnostic" },
+      { "label": "Aerospace, Defence & Spacetech", "value": "aerospace_defence_spacetech" },
+      { "label": "Agriculture & Foodtech", "value": "agriculture_foodtech" },
+      { "label": "AI, ML & IoT", "value": "ai_ml_iot" },
+      { "label": "Art, Culture & Architecture", "value": "art_culture_architecture" },
+      { "label": "Automotive, EV & Smart Mobility", "value": "automotive_ev_smart_mobility" },
+      { "label": "Blue Economy", "value": "blue_economy" },
+      { "label": "Chemicals & Materials", "value": "chemicals_materials" },
+      { "label": "Circular Economy", "value": "circular_economy" },
+      { "label": "Climate Tech & Clean Energy", "value": "climate_tech_clean_energy" },
+      { "label": "Data Mining & Analytics", "value": "data_mining_analytics" },
+      { "label": "Edutech", "value": "edutech" },
+      { "label": "Femtech", "value": "femtech" },
+      { "label": "Fintech & Insurtech", "value": "fintech_insurtech" },
+      { "label": "Healthcare & Life Sciences", "value": "healthcare_life_sciences" },
+      { "label": "HR Tech & Smart Workforce", "value": "hr_tech_smart_workforce" },
+      { "label": "Industry 4.0 & Advanced Manufacturing", "value": "industry_4_advanced_manufacturing" },
+      { "label": "Lifestyle, Personal Care & D2C", "value": "lifestyle_personalcare_d2c" },
+      { "label": "Marketing Tech & MICE", "value": "marketing_tech_mice" },
+      { "label": "Media & Entertainment", "value": "media_entertainment" },
+      { "label": "PropTech, Legal Tech & RegTech", "value": "proptech_legaltech_regtech" },
+      { "label": "Retail Tech", "value": "retail_tech" },
+      { "label": "SaaS, Software & IT/ITES", "value": "saas_software_it_ites" },
+      { "label": "Smart Cities & E-Governance", "value": "smart_cities_e_governance" },
+      { "label": "Social Impact, Rural Livelihood & Sustainability", "value": "social_impact_rural_livelihood_sustainability" },
+      { "label": "Sports Tech & Gaming", "value": "sports_tech_gaming" },
+      { "label": "Supply Chain & Logistics", "value": "supply_chain_logistics" },
+      { "label": "Telecom, Networking & Hardware", "value": "telecom_networking_hardware" },
+      { "label": "TextileTech & Fashion", "value": "textiletech_fashion" },
+      { "label": "Travel & Tourism", "value": "travel_tourism" },
+      { "label": "Web3.0, Blockchain, VR/AR", "value": "web3_blockchain_vr_ar" }
+    ]
+  },
+  {
+    "name": "marketing",
+    "label": "How did you hear about this event?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Social Media", "value": "socialMedia" },
+      { "label": "Email Invitation", "value": "email" },
+      { "label": "Referral", "value": "referral" },
+      { "label": "Website", "value": "website" },
+      { "label": "Other", "value": "other" }
+    ]
+  }
+]
+    
