@@ -1,21 +1,5 @@
+import { ExternalAPIResponse } from '@/types/events'
 import { NextRequest, NextResponse } from 'next/server'
-
-interface ExternalRegistrationData {
-  _id: string
-  Name: string
-  email_id: string
-  phone_number: string
-  gender: string
-  designation: string
-  organization_name: string
-  ticket: string
-}
-
-interface ExternalAPIResponse {
-  statusCode: number
-  message: string
-  data: ExternalRegistrationData[]
-}
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
   let eventId: string | undefined

@@ -539,6 +539,11 @@ export interface Representative {
 export interface Event {
   id: string;
   /**
+   * Ensure sponsor logos are embedded in the image, if applicable
+   */
+  banner_image?: (string | null) | Media;
+  title: string;
+  /**
    * Enable this to make the content visible to all users (e.g., public website visitors).
    */
   isPublic?: boolean | null;
@@ -554,11 +559,6 @@ export interface Event {
    * URL-friendly identifier (English only, auto-generated from title)
    */
   slug?: string | null;
-  /**
-   * Ensure sponsor logos are embedded in the image, if applicable
-   */
-  banner_image?: (string | null) | Media;
-  title: string;
   about?: string | null;
   schedule: {
     from_date: string;
@@ -578,6 +578,24 @@ export interface Event {
     venue: string;
     city: string | City;
     map_url?: string | null;
+  };
+  'audit-log'?: {
+    /**
+     * User who created this content
+     */
+    createdBy?: (string | null) | User;
+    /**
+     * User who last updated this content
+     */
+    updatedBy?: (string | null) | User;
+    log?: {
+      createdAt?: string | null;
+      updatedAt?: string | null;
+      /**
+       * Document version number
+       */
+      version?: number | null;
+    };
   };
   agenda?:
     | {
@@ -642,24 +660,6 @@ export interface Event {
        * Automatically close registration at this number (optional safety limit)
        */
       auto_close_registeration_at?: number | null;
-    };
-  };
-  'audit-log'?: {
-    /**
-     * User who created this content
-     */
-    createdBy?: (string | null) | User;
-    /**
-     * User who last updated this content
-     */
-    updatedBy?: (string | null) | User;
-    log?: {
-      createdAt?: string | null;
-      updatedAt?: string | null;
-      /**
-       * Document version number
-       */
-      version?: number | null;
     };
   };
   updatedAt: string;
@@ -1250,6 +1250,8 @@ export interface SpeakerTypesSelect<T extends boolean = true> {
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
+  banner_image?: T;
+  title?: T;
   isPublic?: T;
   main_or_partner?: T;
   access_level?: T;
@@ -1257,8 +1259,6 @@ export interface EventsSelect<T extends boolean = true> {
   tags?: T;
   current_registerations?: T;
   slug?: T;
-  banner_image?: T;
-  title?: T;
   about?: T;
   schedule?:
     | T
@@ -1279,6 +1279,19 @@ export interface EventsSelect<T extends boolean = true> {
         venue?: T;
         city?: T;
         map_url?: T;
+      };
+  'audit-log'?:
+    | T
+    | {
+        createdBy?: T;
+        updatedBy?: T;
+        log?:
+          | T
+          | {
+              createdAt?: T;
+              updatedAt?: T;
+              version?: T;
+            };
       };
   agenda?:
     | T
@@ -1318,19 +1331,6 @@ export interface EventsSelect<T extends boolean = true> {
           | {
               notify_admins_at?: T;
               auto_close_registeration_at?: T;
-            };
-      };
-  'audit-log'?:
-    | T
-    | {
-        createdBy?: T;
-        updatedBy?: T;
-        log?:
-          | T
-          | {
-              createdAt?: T;
-              updatedAt?: T;
-              version?: T;
             };
       };
   updatedAt?: T;

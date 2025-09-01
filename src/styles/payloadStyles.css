@@ -20,15 +20,3 @@
 :root[data-theme='dark'] {
   --theme-bg: #000000;
 }
-
-.card__title {
-  color: var(--theme-orange);
-}
-
-.button-bg {
-  color: var(--theme-blue);
-}
-
-h1 {
-  color: var(--theme-green);
-}

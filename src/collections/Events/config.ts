@@ -50,72 +50,6 @@ export const Events: CollectionConfig = {
   ],
 
   fields: [
-    isPublic,
-
-    {
-      name: 'main_or_partner',
-      type: 'select',
-      required: true,
-      access: publicFieldAccess,
-      label: 'Main or Partner Event',
-      options: [
-        { label: 'Main Event', value: 'main_event' },
-        {
-          label: 'Partner Event',
-          value: 'partner_event',
-        },
-      ],
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'access_level',
-      label: 'Access Level',
-      type: 'relationship',
-      relationTo: 'ticket-types',
-      hasMany: false,
-      admin: {
-        condition: (_, siblingData) => Boolean(siblingData?.main_or_partner === 'main_event'),
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'format',
-      type: 'relationship',
-      relationTo: 'event-formats',
-      required: true,
-      label: 'Event Format',
-      hasMany: false,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'tags',
-      type: 'relationship',
-      relationTo: 'tags',
-      required: true,
-      label: 'Tags',
-      hasMany: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'current_registerations',
-      label: 'Current Registrations',
-      type: 'number',
-      defaultValue: 0,
-      admin: {
-        condition: (data) => ['fcfs', 'approval'].includes(data?.registeration_mode),
-        description: 'Updated automatically by registration service',
-        readOnly: true,
-        position: 'sidebar',
-      },
-    },
-    slugFromTitle,
-
     {
       type: 'tabs',
       tabs: [
@@ -143,6 +77,73 @@ export const Events: CollectionConfig = {
                 placeholder: 'Opening Keynote: Future of Technology',
               },
             },
+
+            isPublic,
+
+            {
+              name: 'main_or_partner',
+              type: 'select',
+              required: true,
+              access: publicFieldAccess,
+              label: 'Main or Partner Event',
+              options: [
+                { label: 'Main Event', value: 'main_event' },
+                {
+                  label: 'Partner Event',
+                  value: 'partner_event',
+                },
+              ],
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'access_level',
+              label: 'Access Level',
+              type: 'relationship',
+              relationTo: 'ticket-types',
+              hasMany: false,
+              admin: {
+                condition: (_, siblingData) =>
+                  Boolean(siblingData?.main_or_partner === 'main_event'),
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'format',
+              type: 'relationship',
+              relationTo: 'event-formats',
+              required: true,
+              label: 'Event Format',
+              hasMany: false,
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'tags',
+              type: 'relationship',
+              relationTo: 'tags',
+              required: true,
+              label: 'Tags',
+              hasMany: true,
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'current_registerations',
+              label: 'Current Registrations',
+              type: 'number',
+              defaultValue: 0,
+              admin: {
+                condition: (data) => ['fcfs', 'approval'].includes(data?.registeration_mode),
+                description: 'Updated automatically by registration service',
+                readOnly: true,
+                position: 'sidebar',
+              },
+            },
+            slugFromTitle,
             {
               name: 'about',
               type: 'textarea',
@@ -263,6 +264,7 @@ export const Events: CollectionConfig = {
                 },
               ],
             },
+            auditFields,
           ],
         },
 
@@ -355,7 +357,7 @@ export const Events: CollectionConfig = {
         },
 
         {
-          label: 'View Registrations',
+          label: '👥 View Registrations',
           admin: {
             condition: (data) => ['fcfs', 'approval'].includes(data?.registeration_mode),
           },
@@ -373,7 +375,5 @@ export const Events: CollectionConfig = {
         },
       ],
     },
-
-    auditFields,
   ],
 }
