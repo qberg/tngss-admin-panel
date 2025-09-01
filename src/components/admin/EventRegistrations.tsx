@@ -410,7 +410,7 @@ const FullRegistrationCard: React.FC<{ registration: ExternalRegistrationData }>
         </div>
       </div>
 
-      <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-600 opacity-20"></div>
+      <div className="h-1 bg-gradient-to-r from-[#0055FF] to-[#07BCCE] opacity-20"></div>
     </div>
   )
 }
@@ -663,7 +663,7 @@ const EventRegistrations: UIFieldClientComponent = () => {
 
               <button
                 onClick={toggleExpanded}
-                className="inline-flex items-center px-3 py-2 button-bg text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                className="inline-flex items-center px-3 py-2 button-bg bg-[#18BFDB] text-white text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none"
               >
                 <span className="mr-2">{isExpanded ? '📊' : '👀'}</span>
                 {isExpanded ? 'Show Overview' : 'View All'}

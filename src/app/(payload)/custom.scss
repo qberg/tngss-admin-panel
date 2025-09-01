@@ -1,0 +1,61 @@
+.table-wrap {
+  width: 100% !important;
+  max-width: none !important;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100% !important;
+  max-width: none !important;
+
+  table {
+    width: 100% !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+}
+
+.collection-list,
+.list-view {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.table {
+  [class*='w-'],
+  [class*='max-w-'],
+  [class*='min-w-'] {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}
+
+.table {
+  *[class*='sm:'],
+  *[class*='md:'],
+  *[class*='lg:'],
+  *[class*='xl:'],
+  *[class*='2xl:'] {
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+.table {
+  th,
+  td {
+    max-width: none !important;
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.template-default,
+.view-description,
+.collection-list__wrap {
+  width: 100% !important;
+  max-width: none !important;
+}
