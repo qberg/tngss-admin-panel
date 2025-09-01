@@ -24,3 +24,13 @@ export interface ExternalAPIResponse {
   message: string
   data: ExternalRegistrationData[]
 }
+
+export interface ExternalAPIResponseWithMeta extends ExternalAPIResponse {
+  meta?: {
+    total_count: number
+    access_level: 'FULL' | 'MASKED' | 'LIMITED' | 'NONE'
+    filtered_by_role: string
+    accessed_at: string
+    user_id: string
+  }
+}

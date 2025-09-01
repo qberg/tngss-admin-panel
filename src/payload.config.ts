@@ -34,6 +34,7 @@ import { WhyAttendWebPage } from './globals/WhyAttendWebPage/config'
 import { SponsAndPartnersWebPage } from './globals/SponsAndPartnersWebPage/config'
 import { Tickets } from './collections/Tickets/config'
 import { TicketsInfoWebPage } from './globals/TicketsInfoWebPage/config'
+import { WhyTamilNaduWebPage } from './globals/WhyTamilNaduWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -83,6 +84,7 @@ export default buildConfig({
     HomeWebPage,
     AboutUsWebPage,
     WhyAttendWebPage,
+    WhyTamilNaduWebPage,
     TicketsInfoWebPage,
     FaqWebPage,
     SponsAndPartnersWebPage,

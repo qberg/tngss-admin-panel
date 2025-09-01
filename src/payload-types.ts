@@ -127,6 +127,7 @@ export interface Config {
     'home-wp': HomeWp;
     'about-us-wp': AboutUsWp;
     'why-attend-wp': WhyAttendWp;
+    'why-tn-wp': WhyTnWp;
     'tickets-info-wp': TicketsInfoWp;
     'faq-wp': FaqWp;
     'spons-and-partners-wp': SponsAndPartnersWp;
@@ -138,6 +139,7 @@ export interface Config {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
     'about-us-wp': AboutUsWpSelect<false> | AboutUsWpSelect<true>;
     'why-attend-wp': WhyAttendWpSelect<false> | WhyAttendWpSelect<true>;
+    'why-tn-wp': WhyTnWpSelect<false> | WhyTnWpSelect<true>;
     'tickets-info-wp': TicketsInfoWpSelect<false> | TicketsInfoWpSelect<true>;
     'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
     'spons-and-partners-wp': SponsAndPartnersWpSelect<false> | SponsAndPartnersWpSelect<true>;
@@ -1870,6 +1872,64 @@ export interface WhyAttendWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-tn-wp".
+ */
+export interface WhyTnWp {
+  id: string;
+  discover_tn?: {
+    title?: string | null;
+    description?: string | null;
+    impact_numbers?:
+      | {
+          number?: string | null;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  sector_higlights?: {
+    title?: string | null;
+    powerhouse?: {
+      title?: string | null;
+      points?:
+        | {
+            point?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    leadership?: {
+      title?: string | null;
+      sector_cards?:
+        | {
+            title?: string | null;
+            description?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+  };
+  tn_highlights?: {
+    highlight?:
+      | {
+          title?: string | null;
+          image?: (string | null) | Media;
+          points?:
+            | {
+                sub_title?: string | null;
+                description?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tickets-info-wp".
  */
 export interface TicketsInfoWp {
@@ -2484,6 +2544,74 @@ export interface WhyAttendWpSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-tn-wp_select".
+ */
+export interface WhyTnWpSelect<T extends boolean = true> {
+  discover_tn?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        impact_numbers?:
+          | T
+          | {
+              number?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  sector_higlights?:
+    | T
+    | {
+        title?: T;
+        powerhouse?:
+          | T
+          | {
+              title?: T;
+              points?:
+                | T
+                | {
+                    point?: T;
+                    id?: T;
+                  };
+            };
+        leadership?:
+          | T
+          | {
+              title?: T;
+              sector_cards?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+            };
+      };
+  tn_highlights?:
+    | T
+    | {
+        highlight?:
+          | T
+          | {
+              title?: T;
+              image?: T;
+              points?:
+                | T
+                | {
+                    sub_title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
