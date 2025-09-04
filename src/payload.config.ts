@@ -35,6 +35,8 @@ import { SponsAndPartnersWebPage } from './globals/SponsAndPartnersWebPage/confi
 import { Tickets } from './collections/Tickets/config'
 import { TicketsInfoWebPage } from './globals/TicketsInfoWebPage/config'
 import { WhyTamilNaduWebPage } from './globals/WhyTamilNaduWebPage/config'
+import { AttendeePasses } from './collections/AttendeePasses/config'
+import { WhySponsorWebPage } from './globals/WhySponsorWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -88,6 +90,7 @@ export default buildConfig({
     TicketsInfoWebPage,
     FaqWebPage,
     SponsAndPartnersWebPage,
+    WhySponsorWebPage,
     HomeAppPage,
     FeaturedContentApp,
     AboutTNGSSApp,
@@ -109,6 +112,7 @@ export default buildConfig({
     Media,
     Documents,
     AppVersions,
+    AttendeePasses,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

@@ -14,7 +14,7 @@ export const AppVersions: CollectionConfig = {
     defaultColumns: ['version', 'platform', 'updateType', 'isCurrentVersion'],
   },
   access: {
-    create: admin,
+    create: () => false,
     read: anyone,
     update: admin,
     delete: admin,

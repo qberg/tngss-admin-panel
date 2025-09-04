@@ -34,3 +34,9 @@ pm2 start .next/standalone/server.js \
 
 - [x] Featured Content for home page
 - []
+
+## Migration sctipts
+
+```bash
+npx payload run scripts/migrate-attendees.js test
+```

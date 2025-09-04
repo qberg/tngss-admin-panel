@@ -36,7 +36,7 @@ export const AboutUsWebPage: GlobalConfig = {
               ],
             },
           ],
-          label: 'Hero Section',
+          label: 'Hero',
         },
 
         {
@@ -76,7 +76,7 @@ export const AboutUsWebPage: GlobalConfig = {
             {
               name: 'mission',
               type: 'group',
-              label: 'Mission Section',
+              label: 'Mission',
               fields: [
                 {
                   name: 'title',
@@ -124,7 +124,90 @@ export const AboutUsWebPage: GlobalConfig = {
               ],
             },
           ],
-          label: 'Intro Mission Section',
+          label: 'Intro Mission',
+        },
+
+        {
+          fields: [
+            {
+              type: 'group',
+              name: 'whyStartupTN',
+              label: 'Why StartUp TN',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'title',
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'description',
+                },
+                {
+                  name: 'vision',
+                  type: 'group',
+                  label: 'Vision',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                      label: 'Title',
+                    },
+                    {
+                      name: 'description',
+                      type: 'textarea',
+                      label: 'Description',
+                    },
+                  ],
+                },
+
+                {
+                  name: 'mission',
+                  type: 'group',
+                  label: 'Mission',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                      label: 'Title',
+                    },
+                    {
+                      name: 'description',
+                      type: 'textarea',
+                      label: 'Description',
+                    },
+                  ],
+                },
+
+                {
+                  name: 'keyHighlights',
+                  type: 'group',
+                  label: 'Key Highlights',
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                      label: 'Title',
+                    },
+                    {
+                      name: 'points',
+                      type: 'array',
+                      label: 'Highlight Points',
+                      fields: [
+                        {
+                          name: 'text',
+                          type: 'text',
+                          label: 'Point',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          label: 'About StartupTN',
         },
         {
           fields: [
@@ -136,12 +219,12 @@ export const AboutUsWebPage: GlobalConfig = {
                 {
                   name: 'title',
                   type: 'text',
-                  label: 'Title',
+                  label: 'title',
                 },
                 {
                   name: 'description',
                   type: 'textarea',
-                  label: 'Description',
+                  label: 'description',
                 },
                 {
                   name: 'image',
@@ -151,7 +234,7 @@ export const AboutUsWebPage: GlobalConfig = {
               ],
             },
           ],
-          label: 'Why Tamil Nadu Section',
+          label: 'Why Tamil Nadu',
         },
         {
           fields: [
@@ -367,7 +450,7 @@ export const AboutUsWebPage: GlobalConfig = {
               ],
             },
           ],
-          label: 'Get Involved Section',
+          label: 'Get Involved',
         },
       ],
     },

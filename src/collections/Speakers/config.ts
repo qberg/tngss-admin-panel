@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { eventManager, eventManagerFieldAccess } from '../Users/access/eventManager'
+import { eventManagerFieldAccess } from '../Users/access/eventManager'
 import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
 import { durationField } from '@/fields/duration'
@@ -7,6 +7,7 @@ import { bulkOperationsField } from '@/fields/bulkOperations'
 import { auditFields } from '@/fields/audit'
 import { slugField } from '@/fields/slug'
 import { isPublic } from '@/fields/isPublic'
+import { contentManager } from '../Users/access/contentManager'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -25,6 +26,9 @@ const travelFieldAcess = {
 
 export const Speakers: CollectionConfig = {
   slug: 'speakers',
+  pagination: false,
+  defaultLimit: 100,
+  maxLimit: 1000,
   labels: {
     singular: 'Speaker',
     plural: 'Speakers',
@@ -35,10 +39,10 @@ export const Speakers: CollectionConfig = {
     defaultColumns: ['name', 'designation', 'assigned_coordinator', 'isPublic'],
   },
   access: {
-    create: eventManager,
+    create: contentManager,
     read: anyone,
-    update: eventManager,
-    delete: eventManager,
+    update: contentManager,
+    delete: contentManager,
   },
   fields: [
     slugField,
@@ -56,7 +60,6 @@ export const Speakers: CollectionConfig = {
         position: 'sidebar',
       },
     },
-
     {
       type: 'collapsible',
       label: '🌍 Public Frontend Data',
@@ -70,7 +73,6 @@ export const Speakers: CollectionConfig = {
           label: 'Profile Image',
           type: 'upload',
           relationTo: 'media',
-          access: publicFieldAccess,
           admin: {
             description: 'Upload image of the speaker',
           },
@@ -83,7 +85,6 @@ export const Speakers: CollectionConfig = {
               name: 'name',
               type: 'text',
               required: true,
-              access: publicFieldAccess,
               admin: {
                 width: '50%',
               },
@@ -92,7 +93,6 @@ export const Speakers: CollectionConfig = {
               name: 'designation',
               type: 'text',
               required: true,
-              access: publicFieldAccess,
               admin: {
                 width: '50%',
               },
@@ -101,7 +101,6 @@ export const Speakers: CollectionConfig = {
               name: 'organization',
               type: 'text',
               required: true,
-              access: publicFieldAccess,
               admin: {
                 width: '50%',
               },
@@ -121,7 +120,6 @@ export const Speakers: CollectionConfig = {
               name: 'linkedin_url',
               label: 'LinkedIn Profile URL',
               type: 'text',
-              access: publicFieldAccess,
               // @ts-expect-error payload didnt do its magic yet
               validate: (val: string) => {
                 if (val && !val.match(/^https?:\/\/.+/)) {
@@ -153,13 +151,11 @@ export const Speakers: CollectionConfig = {
               ],
             },
           ],
-          access: publicFieldAccess,
         },
         {
           name: 'summary',
           label: 'About/Bio Summary',
           type: 'textarea',
-          access: publicFieldAccess,
           admin: {
             rows: 4,
           },
@@ -169,7 +165,6 @@ export const Speakers: CollectionConfig = {
           name: 'experience',
           type: 'array',
           label: 'Experience',
-          access: publicFieldAccess,
           fields: [
             {
               type: 'row',
@@ -200,7 +195,6 @@ export const Speakers: CollectionConfig = {
           name: 'alma_matter',
           type: 'array',
           label: 'Education',
-          access: publicFieldAccess,
           fields: [
             {
               type: 'row',
@@ -228,7 +222,6 @@ export const Speakers: CollectionConfig = {
         {
           name: 'languages',
           type: 'array',
-          access: publicFieldAccess,
           label: 'Languages Known',
           fields: [
             {
@@ -240,7 +233,6 @@ export const Speakers: CollectionConfig = {
         {
           name: 'tags',
           type: 'relationship',
-          access: publicFieldAccess,
           hasMany: true,
           relationTo: 'tags',
           label: 'Tags',

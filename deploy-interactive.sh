@@ -28,6 +28,7 @@ rsync -avz --delete \
 	--exclude '.env.local' \
 	--exclude '*.log' \
 	--exclude 'deploy*.sh' \
+	--exclude 'migrationlogs.txt' \
 	"$LOCAL_PATH/" "$SERVER_USER@$SERVER_IP:$SERVER_PATH/"
 
 echo -e "${GREEN}✅ Source code synced${NC}"

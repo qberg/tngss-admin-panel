@@ -83,6 +83,7 @@ export interface Config {
     media: Media;
     documents: Document;
     'app-versions': AppVersion;
+    'attendee-passes': AttendeePass;
     exports: Export;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -114,6 +115,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
     'app-versions': AppVersionsSelect<false> | AppVersionsSelect<true>;
+    'attendee-passes': AttendeePassesSelect<false> | AttendeePassesSelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -131,6 +133,7 @@ export interface Config {
     'tickets-info-wp': TicketsInfoWp;
     'faq-wp': FaqWp;
     'spons-and-partners-wp': SponsAndPartnersWp;
+    'why-sponsor-wp': WhySponsorWp;
     'home-app': HomeApp;
     'featured-content-app': FeaturedContentApp;
     'about-tngss-app': AboutTngssApp;
@@ -143,6 +146,7 @@ export interface Config {
     'tickets-info-wp': TicketsInfoWpSelect<false> | TicketsInfoWpSelect<true>;
     'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
     'spons-and-partners-wp': SponsAndPartnersWpSelect<false> | SponsAndPartnersWpSelect<true>;
+    'why-sponsor-wp': WhySponsorWpSelect<false> | WhySponsorWpSelect<true>;
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
     'featured-content-app': FeaturedContentAppSelect<false> | FeaturedContentAppSelect<true>;
     'about-tngss-app': AboutTngssAppSelect<false> | AboutTngssAppSelect<true>;
@@ -886,6 +890,162 @@ export interface AppVersion {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attendee-passes".
+ */
+export interface AttendeePass {
+  id: string;
+  /**
+   * Unique pass identifier (e.g., TNGSSV_10914)
+   */
+  pass_id: string;
+  pass_type: 'TNGSS Visitor' | 'TNGSS Conference';
+  name: string;
+  /**
+   * Primary lookup field for app user onboarding
+   */
+  email?: string | null;
+  /**
+   * From pass_data.gender
+   */
+  gender?: ('male' | 'female' | 'other') | null;
+  mobile: string;
+  /**
+   * Job title/role from pass_data.designation
+   */
+  designation?: string | null;
+  /**
+   * Company/organisation from pass_data.organisation
+   */
+  organisation?: string | null;
+  /**
+   * Original visitor_id from PostgreSQL (links to booking)
+   */
+  legacy_visitor_id: string;
+  /**
+   * Email of person who made the booking (may differ from attendee)
+   */
+  registration_email?: string | null;
+  /**
+   * Organization that made the booking
+   */
+  registration_organisation?: string | null;
+  registration_city?: string | null;
+  registration_state?: string | null;
+  registration_country?: string | null;
+  /**
+   * From visitor_data.profileType - detailed user categorization
+   */
+  profile_type:
+    | 'dpii'
+    | 'non_dpiit'
+    | 'college_student'
+    | 'working_professional'
+    | 'business_owner'
+    | 'research_scholar'
+    | 'educational_institutions'
+    | 'corporates'
+    | 'business_social_forums'
+    | 'startup_communities'
+    | 'ngos'
+    | 'banks'
+    | 'media_agencies'
+    | 'rd_agencies'
+    | 'incubators'
+    | 'accelerators'
+    | 'angel_investors'
+    | 'venture_capitalists'
+    | 'private_equity_firms'
+    | 'corporate_investors'
+    | 'family_offices'
+    | 'revenue_based_financing'
+    | 'mentor'
+    | 'subject_matter_expert'
+    | 'legal_compliance_services'
+    | 'coworking_space'
+    | 'consulting_advisory_services'
+    | 'makerspace'
+    | 'financial_services'
+    | 'technology_services'
+    | 'marketing_branding_services';
+  /**
+   * From visitor_data.sectorInterested - sector user is interested in
+   */
+  sector_interested:
+    | 'sector_agnostic'
+    | 'aerospace_defence_spacetech'
+    | 'agriculture_foodtech'
+    | 'ai_ml_iot'
+    | 'art_culture_architecture'
+    | 'automotive_ev_smart_mobility'
+    | 'blue_economy'
+    | 'chemicals_materials'
+    | 'circular_economy'
+    | 'climate_tech_clean_energy'
+    | 'data_mining_analytics'
+    | 'edutech'
+    | 'femtech'
+    | 'fintech_insurtech'
+    | 'healthcare_life_sciences'
+    | 'hr_tech_smart_workforce'
+    | 'industry_4_advanced_manufacturing'
+    | 'lifestyle_personalcare_d2c'
+    | 'marketing_tech_mice'
+    | 'media_entertainment'
+    | 'proptech_legaltech_regtech'
+    | 'retail_tech'
+    | 'saas_software_it_ites'
+    | 'smart_cities_e_governance'
+    | 'social_impact_rural_livelihood_sustainability'
+    | 'sports_tech_gaming'
+    | 'supply_chain_logistics'
+    | 'telecom_networking_hardware'
+    | 'textiletech_fashion'
+    | 'travel_tourism'
+    | 'web3_blockchain_vr_ar';
+  /**
+   * From visitor_data.organisationType - key for user categorization
+   */
+  organisation_type:
+    | 'startup'
+    | 'aspirants_individuals'
+    | 'ecosystem_enablers'
+    | 'incubation_acceleration'
+    | 'investors'
+    | 'mentor_sme'
+    | 'ecosystem_service_provider';
+  /**
+   * Reason for attending from registration
+   */
+  why_attending?: string | null;
+  /**
+   * Website URL from registration
+   */
+  website?: string | null;
+  /**
+   * When pass was originally created in PostgreSQL
+   */
+  legacy_created_at?: string | null;
+  /**
+   * Has attendee checked in at event?
+   */
+  checked_in?: boolean | null;
+  /**
+   * Raw check-in data from PostgreSQL
+   */
+  checkin_data?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "exports".
  */
 export interface Export {
@@ -1081,6 +1241,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'app-versions';
         value: string | AppVersion;
+      } | null)
+    | ({
+        relationTo: 'attendee-passes';
+        value: string | AttendeePass;
       } | null)
     | ({
         relationTo: 'exports';
@@ -1597,6 +1761,36 @@ export interface AppVersionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attendee-passes_select".
+ */
+export interface AttendeePassesSelect<T extends boolean = true> {
+  pass_id?: T;
+  pass_type?: T;
+  name?: T;
+  email?: T;
+  gender?: T;
+  mobile?: T;
+  designation?: T;
+  organisation?: T;
+  legacy_visitor_id?: T;
+  registration_email?: T;
+  registration_organisation?: T;
+  registration_city?: T;
+  registration_state?: T;
+  registration_country?: T;
+  profile_type?: T;
+  sector_interested?: T;
+  organisation_type?: T;
+  why_attending?: T;
+  website?: T;
+  legacy_created_at?: T;
+  checked_in?: T;
+  checkin_data?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "exports_select".
  */
 export interface ExportsSelect<T extends boolean = true> {
@@ -1759,6 +1953,27 @@ export interface AboutUsWp {
      * Alternative text for the image (for accessibility)
      */
     imageAlt?: string | null;
+  };
+  whyStartupTN?: {
+    title?: string | null;
+    description?: string | null;
+    vision?: {
+      title?: string | null;
+      description?: string | null;
+    };
+    mission?: {
+      title?: string | null;
+      description?: string | null;
+    };
+    keyHighlights?: {
+      title?: string | null;
+      points?:
+        | {
+            text?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
   };
   whyTN?: {
     title?: string | null;
@@ -2132,6 +2347,43 @@ export interface SponsAndPartnersWp {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-sponsor-wp".
+ */
+export interface WhySponsorWp {
+  id: string;
+  about_tngss?: {
+    title?: string | null;
+    /**
+     * Seperate paragraphs with a empty line
+     */
+    content?: string | null;
+  };
+  event_highlights?: {
+    title?: string | null;
+    impact_numbers?:
+      | {
+          number?: string | null;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  spons_benefits?: {
+    title?: string | null;
+    cards?:
+      | {
+          icon?: (string | null) | Media;
+          title?: string | null;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-app".
  */
 export interface HomeApp {
@@ -2425,6 +2677,35 @@ export interface AboutUsWpSelect<T extends boolean = true> {
             };
         image?: T;
         imageAlt?: T;
+      };
+  whyStartupTN?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        vision?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+            };
+        mission?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+            };
+        keyHighlights?:
+          | T
+          | {
+              title?: T;
+              points?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+            };
       };
   whyTN?:
     | T
@@ -2793,6 +3074,46 @@ export interface SponsAndPartnersWpSelect<T extends boolean = true> {
                     url?: T;
                     id?: T;
                   };
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "why-sponsor-wp_select".
+ */
+export interface WhySponsorWpSelect<T extends boolean = true> {
+  about_tngss?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+      };
+  event_highlights?:
+    | T
+    | {
+        title?: T;
+        impact_numbers?:
+          | T
+          | {
+              number?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  spons_benefits?:
+    | T
+    | {
+        title?: T;
+        cards?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
               id?: T;
             };
       };

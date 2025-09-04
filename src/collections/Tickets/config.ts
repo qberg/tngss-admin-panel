@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
 import { admin } from '../Users/access/admin'
 import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
-import { contentManager, contentManagerFieldAccess } from '../Users/access/contentManager'
+import { contentManagerFieldAccess } from '../Users/access/contentManager'
 import { slugField } from '@/fields/slug'
 import { auditFields } from '@/fields/audit'
 import { isPublic } from '@/fields/isPublic'
+import { eventManager } from '../Users/access/eventManager'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -35,7 +36,7 @@ export const Tickets: CollectionConfig = {
   access: {
     create: admin,
     read: anyone,
-    update: contentManager,
+    update: eventManager,
     delete: admin,
   },
   fields: [
