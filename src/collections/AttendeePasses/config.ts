@@ -1,6 +1,4 @@
-import { organisationField } from '@/fields/organisation'
-import { profileField } from '@/fields/profile'
-import { sectorsField } from '@/fields/sectors'
+import { createAttendeePass, createAttendeePassesBulk } from '@/endpoints/attendee-passses/create'
 import type { CollectionConfig } from 'payload'
 
 export const AttendeePasses: CollectionConfig = {
@@ -13,13 +11,25 @@ export const AttendeePasses: CollectionConfig = {
     create: () => false,
     read: () => true,
     update: () => false,
-    delete: () => false,
+    delete: () => true,
   },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'pass_type', 'email', 'organisation', 'legacy_created_at'],
     listSearchableFields: ['name', 'email', 'organisation', 'pass_id'],
   },
+  endpoints: [
+    {
+      path: '/create',
+      method: 'post',
+      handler: createAttendeePass,
+    },
+    {
+      path: '/bulk',
+      method: 'post',
+      handler: createAttendeePassesBulk,
+    },
+  ],
   fields: [
     // data needs to come from visitor_pass_data
     {
@@ -37,13 +47,9 @@ export const AttendeePasses: CollectionConfig = {
 
     {
       name: 'pass_type',
-      type: 'select',
+      type: 'text',
       label: 'Pass Type',
       required: true,
-      options: [
-        { label: 'TNGSS Visitor', value: 'TNGSS Visitor' },
-        { label: 'TNGSS Conference', value: 'TNGSS Conference' },
-      ],
       admin: {
         readOnly: true,
       },
@@ -70,12 +76,7 @@ export const AttendeePasses: CollectionConfig = {
 
     {
       name: 'gender',
-      type: 'select',
-      options: [
-        { label: 'Male', value: 'male' },
-        { label: 'Female', value: 'female' },
-        { label: 'Other', value: 'other' },
-      ],
+      type: 'text',
       admin: {
         description: 'From pass_data.gender',
         readOnly: true,
@@ -158,9 +159,30 @@ export const AttendeePasses: CollectionConfig = {
         readOnly: true,
       },
     },
-    profileField,
-    sectorsField,
-    organisationField,
+    {
+      name: 'profile_type',
+      type: 'text',
+      admin: {
+        description: 'Profile type from registration',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'sector_interested',
+      type: 'text',
+      admin: {
+        description: 'Sector of interest',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'organisation_type',
+      type: 'text',
+      admin: {
+        description: 'Type of organisation',
+        readOnly: true,
+      },
+    },
 
     {
       name: 'why_attending',

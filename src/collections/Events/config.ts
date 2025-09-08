@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { eventManager } from '../Users/access/eventManager'
 import { anyone } from '../Users/access/anyone'
 import { slugFromTitle } from '@/fields/slug'
 import { scheduleField } from '@/fields/duration'
@@ -10,6 +9,7 @@ import { auditFields } from '@/fields/audit'
 import { isPublic } from '@/fields/isPublic'
 import { getEventsFilters } from '@/endpoints/events/filters'
 import { getAvailableDates } from '@/endpoints/events/availableDates'
+import { contentManager } from '../Users/access/contentManager'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -30,10 +30,10 @@ export const Events: CollectionConfig = {
     ],
   },
   access: {
-    create: eventManager,
+    create: contentManager,
     read: anyone,
-    update: eventManager,
-    delete: eventManager,
+    update: contentManager,
+    delete: contentManager,
   },
 
   endpoints: [

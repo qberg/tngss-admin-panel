@@ -1,6 +1,8 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -37,6 +39,9 @@ import { TicketsInfoWebPage } from './globals/TicketsInfoWebPage/config'
 import { WhyTamilNaduWebPage } from './globals/WhyTamilNaduWebPage/config'
 import { AttendeePasses } from './collections/AttendeePasses/config'
 import { WhySponsorWebPage } from './globals/WhySponsorWebPage/config'
+import { SponsorFormWebPage } from './globals/SponsorFormWebPage/config'
+import { customBeforeEmail } from './emails/beforeEmailHandler'
+import { NetworkingSessions } from './collections/NetworkingSessions/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -67,6 +72,19 @@ export default buildConfig({
       },
     },
   },
+  // Email Config
+  email: nodemailerAdapter({
+    defaultFromAddress: process.env.FROM_MAIL || 'events@startuptn.in',
+    defaultFromName: 'TNGSS 2025 - StartupTN',
+    transportOptions: {
+      host: process.env.MAIL_HOST,
+      port: 587,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    },
+  }),
   cors: [
     // Development
     'http://localhost:3000',
@@ -91,6 +109,7 @@ export default buildConfig({
     FaqWebPage,
     SponsAndPartnersWebPage,
     WhySponsorWebPage,
+    SponsorFormWebPage,
     HomeAppPage,
     FeaturedContentApp,
     AboutTNGSSApp,
@@ -99,6 +118,7 @@ export default buildConfig({
     Speakers,
     SpeakerTypes,
     Events,
+    NetworkingSessions,
     EventFormats,
     EventTags,
     Halls,
@@ -126,7 +146,24 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     importExportPlugin({
-      collections: ['speakers', 'events'],
+      collections: ['speakers', 'events', 'form-submissions', 'attendee-passes'],
+    }),
+    // Form builder plugin
+    formBuilderPlugin({
+      fields: {
+        text: true,
+        textarea: true,
+        select: true,
+        email: true,
+        state: true,
+        country: true,
+        checkbox: true,
+        number: true,
+        message: true,
+        date: false,
+        payment: false,
+      },
+      beforeEmail: customBeforeEmail,
     }),
     // storage-adapter-placeholder
     s3Storage({

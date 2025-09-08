@@ -1,5 +1,5 @@
 import { anyone } from '@/collections/Users/access/anyone'
-import { contentManager } from '@/collections/Users/access/contentManager'
+import { eventManager } from '@/collections/Users/access/eventManager'
 import { createSponsorField } from '@/fields/sponsorField'
 import type { GlobalConfig } from 'payload'
 
@@ -19,7 +19,7 @@ export const SponsAndPartnersWebPage: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: contentManager,
+    update: eventManager,
   },
   fields: [
     {

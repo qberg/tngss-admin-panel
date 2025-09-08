@@ -13,6 +13,7 @@ export const profileField: Field = {
     { label: 'Working Professionals', value: 'working_professional' },
     { label: 'Business Owners', value: 'business_owner' },
     { label: 'Research Scholars', value: 'research_scholar' },
+    { label: 'Education Institution', value: 'education_institution' },
     // Ecosystem Enablers options
     { label: 'Educational Institutions', value: 'educational_institutions' },
     { label: 'Corporates', value: 'corporates' },

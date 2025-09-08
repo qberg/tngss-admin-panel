@@ -7,6 +7,8 @@ import { useCallback, useState } from 'react'
 import { useAuth } from '@payloadcms/ui'
 import { CORE_COLLECTIONS, QUICK_ACTIONS } from './config'
 import { fetchStatsWithRestAPI } from './utils'
+import DashboardSection from './DashboardSection'
+import { FormCSVExport } from '../forms/FormCSVExport'
 
 interface DashboardClientProps {
   initialStats: CollectionStats | null
@@ -156,6 +158,13 @@ const DashboardClient: React.FC<DashboardClientProps> = ({ initialStats, adminRo
             ))}
           </div>
         </div>
+
+        {/*forms*/}
+        <DashboardSection title="Forms">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <FormCSVExport />
+          </div>
+        </DashboardSection>
 
         {/* Additional Collections - Quick Access */}
         <div className="mb-8">

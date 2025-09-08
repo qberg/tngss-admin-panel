@@ -70,6 +70,7 @@ export interface Config {
     speakers: Speaker;
     'speaker-types': SpeakerType;
     events: Event;
+    'networking-sessions': NetworkingSession;
     'event-formats': EventFormat;
     tags: Tag;
     halls: Hall;
@@ -85,6 +86,8 @@ export interface Config {
     'app-versions': AppVersion;
     'attendee-passes': AttendeePass;
     exports: Export;
+    forms: Form;
+    'form-submissions': FormSubmission;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +105,7 @@ export interface Config {
     speakers: SpeakersSelect<false> | SpeakersSelect<true>;
     'speaker-types': SpeakerTypesSelect<false> | SpeakerTypesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    'networking-sessions': NetworkingSessionsSelect<false> | NetworkingSessionsSelect<true>;
     'event-formats': EventFormatsSelect<false> | EventFormatsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     halls: HallsSelect<false> | HallsSelect<true>;
@@ -117,6 +121,8 @@ export interface Config {
     'app-versions': AppVersionsSelect<false> | AppVersionsSelect<true>;
     'attendee-passes': AttendeePassesSelect<false> | AttendeePassesSelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -134,6 +140,7 @@ export interface Config {
     'faq-wp': FaqWp;
     'spons-and-partners-wp': SponsAndPartnersWp;
     'why-sponsor-wp': WhySponsorWp;
+    'sponsor-form-wp': SponsorFormWp;
     'home-app': HomeApp;
     'featured-content-app': FeaturedContentApp;
     'about-tngss-app': AboutTngssApp;
@@ -147,6 +154,7 @@ export interface Config {
     'faq-wp': FaqWpSelect<false> | FaqWpSelect<true>;
     'spons-and-partners-wp': SponsAndPartnersWpSelect<false> | SponsAndPartnersWpSelect<true>;
     'why-sponsor-wp': WhySponsorWpSelect<false> | WhySponsorWpSelect<true>;
+    'sponsor-form-wp': SponsorFormWpSelect<false> | SponsorFormWpSelect<true>;
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
     'featured-content-app': FeaturedContentAppSelect<false> | FeaturedContentAppSelect<true>;
     'about-tngss-app': AboutTngssAppSelect<false> | AboutTngssAppSelect<true>;
@@ -778,6 +786,60 @@ export interface City {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "networking-sessions".
+ */
+export interface NetworkingSession {
+  id: string;
+  main_or_partner: 'main_event' | 'partner_event';
+  /**
+   * Auto-generated based on zone and time selection
+   */
+  display_name?: string | null;
+  /**
+   * Enable this to make the content visible to all users (e.g., public website visitors).
+   */
+  isPublic?: boolean | null;
+  main_event_sessions_config?: {
+    zone?: (string | null) | Zone;
+    start_time?: string | null;
+    end_time?: string | null;
+    /**
+     * How long each individual meetings lasts
+     */
+    meeting_duration?: number | null;
+    /**
+     * How many meetings can happen at the same time (based on tables/space)
+     */
+    concurrent_meetings?: number | null;
+    allowed_ticket_types?: (string | null) | TicketType;
+  };
+  partner_event_sessions_config?: {
+    venue_name?: string | null;
+    city?: (string | null) | City;
+    /**
+     * Users will choose their own meeting times on this date
+     */
+    event_date: string;
+    /**
+     * When user picks start time, end time = start + this duration
+     */
+    default_meeting_duration: number;
+    allowed_time_range?: {
+      /**
+       * Earliest time users can book meetings
+       */
+      earliest_start?: string | null;
+      /**
+       * Latest time users can start meetings
+       */
+      latest_start?: string | null;
+    };
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tickets".
  */
 export interface Ticket {
@@ -898,7 +960,7 @@ export interface AttendeePass {
    * Unique pass identifier (e.g., TNGSSV_10914)
    */
   pass_id: string;
-  pass_type: 'TNGSS Visitor' | 'TNGSS Conference';
+  pass_type: string;
   name: string;
   /**
    * Primary lookup field for app user onboarding
@@ -907,7 +969,7 @@ export interface AttendeePass {
   /**
    * From pass_data.gender
    */
-  gender?: ('male' | 'female' | 'other') | null;
+  gender?: string | null;
   mobile: string;
   /**
    * Job title/role from pass_data.designation
@@ -933,86 +995,17 @@ export interface AttendeePass {
   registration_state?: string | null;
   registration_country?: string | null;
   /**
-   * From visitor_data.profileType - detailed user categorization
+   * Profile type from registration
    */
-  profile_type:
-    | 'dpii'
-    | 'non_dpiit'
-    | 'college_student'
-    | 'working_professional'
-    | 'business_owner'
-    | 'research_scholar'
-    | 'educational_institutions'
-    | 'corporates'
-    | 'business_social_forums'
-    | 'startup_communities'
-    | 'ngos'
-    | 'banks'
-    | 'media_agencies'
-    | 'rd_agencies'
-    | 'incubators'
-    | 'accelerators'
-    | 'angel_investors'
-    | 'venture_capitalists'
-    | 'private_equity_firms'
-    | 'corporate_investors'
-    | 'family_offices'
-    | 'revenue_based_financing'
-    | 'mentor'
-    | 'subject_matter_expert'
-    | 'legal_compliance_services'
-    | 'coworking_space'
-    | 'consulting_advisory_services'
-    | 'makerspace'
-    | 'financial_services'
-    | 'technology_services'
-    | 'marketing_branding_services';
+  profile_type?: string | null;
   /**
-   * From visitor_data.sectorInterested - sector user is interested in
+   * Sector of interest
    */
-  sector_interested:
-    | 'sector_agnostic'
-    | 'aerospace_defence_spacetech'
-    | 'agriculture_foodtech'
-    | 'ai_ml_iot'
-    | 'art_culture_architecture'
-    | 'automotive_ev_smart_mobility'
-    | 'blue_economy'
-    | 'chemicals_materials'
-    | 'circular_economy'
-    | 'climate_tech_clean_energy'
-    | 'data_mining_analytics'
-    | 'edutech'
-    | 'femtech'
-    | 'fintech_insurtech'
-    | 'healthcare_life_sciences'
-    | 'hr_tech_smart_workforce'
-    | 'industry_4_advanced_manufacturing'
-    | 'lifestyle_personalcare_d2c'
-    | 'marketing_tech_mice'
-    | 'media_entertainment'
-    | 'proptech_legaltech_regtech'
-    | 'retail_tech'
-    | 'saas_software_it_ites'
-    | 'smart_cities_e_governance'
-    | 'social_impact_rural_livelihood_sustainability'
-    | 'sports_tech_gaming'
-    | 'supply_chain_logistics'
-    | 'telecom_networking_hardware'
-    | 'textiletech_fashion'
-    | 'travel_tourism'
-    | 'web3_blockchain_vr_ar';
+  sector_interested?: string | null;
   /**
-   * From visitor_data.organisationType - key for user categorization
+   * Type of organisation
    */
-  organisation_type:
-    | 'startup'
-    | 'aspirants_individuals'
-    | 'ecosystem_enablers'
-    | 'incubation_acceleration'
-    | 'investors'
-    | 'mentor_sme'
-    | 'ecosystem_service_provider';
+  organisation_type?: string | null;
   /**
    * Reason for attending from registration
    */
@@ -1078,6 +1071,197 @@ export interface Export {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: string;
+  title: string;
+  fields?:
+    | (
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            defaultValue?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'checkbox';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'country';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'email';
+          }
+        | {
+            message?: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'message';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'number';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            placeholder?: string | null;
+            options?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'select';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'state';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textarea';
+          }
+      )[]
+    | null;
+  submitButtonLabel?: string | null;
+  /**
+   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
+   */
+  confirmationType?: ('message' | 'redirect') | null;
+  confirmationMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  redirect?: {
+    url: string;
+  };
+  /**
+   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
+   */
+  emails?:
+    | {
+        emailTo?: string | null;
+        cc?: string | null;
+        bcc?: string | null;
+        replyTo?: string | null;
+        emailFrom?: string | null;
+        subject: string;
+        /**
+         * Enter the message that should be sent in this email.
+         */
+        message?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions".
+ */
+export interface FormSubmission {
+  id: string;
+  form: string | Form;
+  submissionData?:
+    | {
+        field: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1191,6 +1375,10 @@ export interface PayloadLockedDocument {
         value: string | Event;
       } | null)
     | ({
+        relationTo: 'networking-sessions';
+        value: string | NetworkingSession;
+      } | null)
+    | ({
         relationTo: 'event-formats';
         value: string | EventFormat;
       } | null)
@@ -1249,6 +1437,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'exports';
         value: string | Export;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: string | Form;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: string | FormSubmission;
       } | null)
     | ({
         relationTo: 'payload-jobs';
@@ -1497,6 +1693,41 @@ export interface EventsSelect<T extends boolean = true> {
           | {
               notify_admins_at?: T;
               auto_close_registeration_at?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "networking-sessions_select".
+ */
+export interface NetworkingSessionsSelect<T extends boolean = true> {
+  main_or_partner?: T;
+  display_name?: T;
+  isPublic?: T;
+  main_event_sessions_config?:
+    | T
+    | {
+        zone?: T;
+        start_time?: T;
+        end_time?: T;
+        meeting_duration?: T;
+        concurrent_meetings?: T;
+        allowed_ticket_types?: T;
+      };
+  partner_event_sessions_config?:
+    | T
+    | {
+        venue_name?: T;
+        city?: T;
+        event_date?: T;
+        default_meeting_duration?: T;
+        allowed_time_range?:
+          | T
+          | {
+              earliest_start?: T;
+              latest_start?: T;
             };
       };
   updatedAt?: T;
@@ -1814,6 +2045,155 @@ export interface ExportsSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  fields?:
+    | T
+    | {
+        checkbox?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              defaultValue?: T;
+              id?: T;
+              blockName?: T;
+            };
+        country?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        email?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        message?:
+          | T
+          | {
+              message?: T;
+              id?: T;
+              blockName?: T;
+            };
+        number?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        select?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              placeholder?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        state?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textarea?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  submitButtonLabel?: T;
+  confirmationType?: T;
+  confirmationMessage?: T;
+  redirect?:
+    | T
+    | {
+        url?: T;
+      };
+  emails?:
+    | T
+    | {
+        emailTo?: T;
+        cc?: T;
+        bcc?: T;
+        replyTo?: T;
+        emailFrom?: T;
+        subject?: T;
+        message?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  form?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2353,6 +2733,11 @@ export interface WhySponsorWp {
   id: string;
   about_tngss?: {
     title?: string | null;
+    image_block?: {
+      caption?: string | null;
+      description?: string | null;
+      image?: (string | null) | Media;
+    };
     /**
      * Seperate paragraphs with a empty line
      */
@@ -2379,6 +2764,18 @@ export interface WhySponsorWp {
         }[]
       | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-form-wp".
+ */
+export interface SponsorFormWp {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  form?: (string | null) | Form;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3090,6 +3487,13 @@ export interface WhySponsorWpSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        image_block?:
+          | T
+          | {
+              caption?: T;
+              description?: T;
+              image?: T;
+            };
         content?: T;
       };
   event_highlights?:
@@ -3117,6 +3521,18 @@ export interface WhySponsorWpSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-form-wp_select".
+ */
+export interface SponsorFormWpSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  form?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

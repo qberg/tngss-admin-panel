@@ -28,10 +28,37 @@ export const WhySponsorWebPage: GlobalConfig = {
             },
 
             {
-              name: 'image',
-              type: 'upload',
-              relationTo: 'media',
-              label: 'Image',
+              name: 'image_block',
+              type: 'group',
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'caption',
+                      type: 'text',
+                      label: 'Caption',
+                      admin: {
+                        width: '50%',
+                      },
+                    },
+                    {
+                      name: 'description',
+                      type: 'text',
+                      label: 'Description',
+                      admin: {
+                        width: '50%',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Image',
+                },
+              ],
             },
 
             {
