@@ -1,4 +1,8 @@
 import { createAttendeePass, createAttendeePassesBulk } from '@/endpoints/attendee-passses/create'
+import { organisationField } from '@/fields/organisation'
+import { profileField } from '@/fields/profile'
+import { sectorsField } from '@/fields/sectors'
+import { whyAttendingField } from '@/fields/whyAttending'
 import type { CollectionConfig } from 'payload'
 
 export const AttendeePasses: CollectionConfig = {
@@ -11,7 +15,7 @@ export const AttendeePasses: CollectionConfig = {
     create: () => false,
     read: () => true,
     update: () => false,
-    delete: () => true,
+    delete: () => false,
   },
   admin: {
     useAsTitle: 'name',
@@ -111,19 +115,10 @@ export const AttendeePasses: CollectionConfig = {
     },
 
     // registration context
-    {
-      name: 'legacy_visitor_id',
-      type: 'text',
-      required: true,
-      index: true,
-      admin: {
-        description: 'Original visitor_id from PostgreSQL (links to booking)',
-        readOnly: true,
-      },
-    },
 
     {
       name: 'registration_email',
+      label: 'Registration Email',
       type: 'email',
       admin: {
         description: 'Email of person who made the booking (may differ from attendee)',
@@ -132,6 +127,7 @@ export const AttendeePasses: CollectionConfig = {
     },
     {
       name: 'registration_organisation',
+      label: 'Registration organisation',
       type: 'text',
       admin: {
         description: 'Organization that made the booking',
@@ -140,6 +136,7 @@ export const AttendeePasses: CollectionConfig = {
     },
     {
       name: 'registration_city',
+      label: 'City',
       type: 'text',
       admin: {
         readOnly: true,
@@ -147,6 +144,7 @@ export const AttendeePasses: CollectionConfig = {
     },
     {
       name: 'registration_state',
+      label: 'State',
       type: 'text',
       admin: {
         readOnly: true,
@@ -159,39 +157,10 @@ export const AttendeePasses: CollectionConfig = {
         readOnly: true,
       },
     },
-    {
-      name: 'profile_type',
-      type: 'text',
-      admin: {
-        description: 'Profile type from registration',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'sector_interested',
-      type: 'text',
-      admin: {
-        description: 'Sector of interest',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'organisation_type',
-      type: 'text',
-      admin: {
-        description: 'Type of organisation',
-        readOnly: true,
-      },
-    },
-
-    {
-      name: 'why_attending',
-      type: 'text',
-      admin: {
-        description: 'Reason for attending from registration',
-        readOnly: true,
-      },
-    },
+    organisationField,
+    profileField,
+    sectorsField,
+    whyAttendingField,
     {
       name: 'website',
       type: 'text',
@@ -213,6 +182,18 @@ export const AttendeePasses: CollectionConfig = {
       },
     },
 
+    {
+      name: 'legacy_visitor_id',
+      type: 'text',
+      required: true,
+      label: 'Legacy Visitor ID',
+      index: true,
+      admin: {
+        description: 'Original visitor_id from PostgreSQL (links to booking)',
+        readOnly: true,
+      },
+    },
+
     // check in status
     {
       name: 'checked_in',
@@ -228,6 +209,15 @@ export const AttendeePasses: CollectionConfig = {
       type: 'json',
       admin: {
         description: 'Raw check-in data from PostgreSQL',
+        readOnly: true,
+      },
+    },
+
+    {
+      name: 'migration_notes',
+      type: 'textarea',
+      admin: {
+        description: 'Notes from data migration (e.g., value mappings applied)',
         readOnly: true,
       },
     },

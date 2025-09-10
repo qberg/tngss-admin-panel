@@ -1,0 +1,153 @@
+[
+  {
+    "name": "organisation_type",
+    "label": "Profile Type",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Startup", "value": "startup" },
+      { "label": "Aspirant", "value": "aspirants_individuals" },
+      { "label": "Incubation & Acceleration", "value": "incubation_acceleration" },
+      { "label": "Investor", "value": "investors" },
+      { "label": "Government", "value": "government" },
+      { "label": "Industry & Corporate", "value": "industry_corporate" },
+      { "label": "Mentor", "value": "mentor_sme" },
+      { "label": "Ecosystem Partners", "value": "ecosystem_service_provider" },
+      { "label": "Others", "value": "others" }
+    ]
+  },
+  {
+    "name": "profile_type",
+    "label": "Sub Profile",
+    "type": "select",
+    "required": true,
+    "dynamicOptions": {
+      "dependsOn": "organisationType",
+      "optionsMap": {
+        "startup": [
+          { "label": "DPIIT", "value": "dpii" },
+          { "label": "Non DPIIT", "value": "non_dpiit" }
+        ],
+        "aspirants_individuals": [
+          { "label": "College Students", "value": "college_student" },
+          { "label": "Working Professionals", "value": "working_professional" }
+        ],
+        "ecosystem_enablers": [
+          { "label": "Educational Institutions", "value": "educational_institutions" },
+          { "label": "Corporates", "value": "corporates" },
+          { "label": "Business & Social Forums", "value": "business_social_forums" },
+          { "label": "Startup Communities", "value": "startup_communities" },
+          { "label": "NGOs", "value": "ngos" },
+          { "label": "Banks", "value": "banks" },
+          { "label": "Media Agencies", "value": "media_agencies" },
+          { "label": "R&D Agencies", "value": "rd_agencies" }
+        ],
+        "incubation_acceleration": [
+          { "label": "Incubators", "value": "incubators" },
+          { "label": "Accelerators", "value": "accelerators" }
+        ],
+        "government": [
+          { "label": "State Government", "value": "state_government" },
+          { "label": "Union Government", "value": "union_government" },
+          { "label": "International", "value": "international" }
+        ],
+        "investors": [
+          { "label": "Banks", "value": "banks" },
+          { "label": "HNIs", "value": "hnis" },
+          { "label": "Angel Investor", "value": "angel_investor" },
+          { "label": "Venture Capitalists (VCs)", "value": "venture_capitalists" },
+          { "label": "Angel Networks", "value": "angel_networks" },
+          { "label": "Family Office", "value": "family_office" },
+          { "label": "Private Equity", "value": "private_equity" },
+          { "label": "Revenue Based Financing", "value": "revenue_based_financing" },
+          { "label": "Venture Debt", "value": "venture_debt" },
+          { "label": "Limited Partners", "value": "limited_partners" }
+        ],
+        "mentor_sme": [
+          { "label": "Mentor", "value": "mentor" },
+          { "label": "Subject Matter Expert", "value": "subject_matter_expert" }
+        ],
+        "ecosystem_service_provider": [
+          { "label": "Education Institution", "value": "education_institution" },
+          { "label": "Business & Social Forums", "value": "business_social_forums" },
+          { "label": "Startup Community", "value": "startup_community" },
+          { "label": "NGO", "value": "ngo" },
+          { "label": "Media Agency", "value": "media_agency" },
+          { "label": "R&D Agency", "value": "r&d_agency" },
+          { "label": "Legal & Compliance Services", "value": "legal_compliance_services" },
+          { "label": "Consulting and Advisory Services", "value": "consulting_advisory_services" },
+          { "label": "Coworking Space", "value": "coworking_space" },
+          { "label": "Makerspace", "value": "makerspace" },
+          { "label": "Financial Services", "value": "financial_services" },
+          { "label": "Technology Services", "value": "technology_services" },
+          { "label": "Marketing and Branding Services", "value": "marketing_branding_services" },
+          { "label": "Design Agency", "value": "design_agency" },
+          { "label": "Industry Association", "value": "industry_association" }
+        ]
+      }
+    },
+    "shouldShow": "(values) => { if (values.organisationType === 'startup' && values.country !== 'IN') { return false; } const hiddenTypes = ['incubation_acceleration','others','mentor_sme','industry_corporate']; return !hiddenTypes.includes(values.organisationType); }"
+  },
+  {
+    "name": "sector_interested",
+    "label": "Sector",
+    "placeholder": "Enter sectors of interest",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Sector Agnostic", "value": "sector_agnostic" },
+      { "label": "Aerospace, Defence & Spacetech", "value": "aerospace_defence_spacetech" },
+      { "label": "Agriculture & Foodtech", "value": "agriculture_foodtech" },
+      { "label": "AI, ML & IoT", "value": "ai_ml_iot" },
+      { "label": "Art, Culture & Architecture", "value": "art_culture_architecture" },
+      { "label": "Automotive, EV & Smart Mobility", "value": "automotive_ev_smart_mobility" },
+      { "label": "Blue Economy", "value": "blue_economy" },
+      { "label": "Chemicals & Materials", "value": "chemicals_materials" },
+      { "label": "Circular Economy", "value": "circular_economy" },
+      { "label": "Climate Tech & Clean Energy", "value": "climate_tech_clean_energy" },
+      { "label": "Data Mining & Analytics", "value": "data_mining_analytics" },
+      { "label": "Edutech", "value": "edutech" },
+      { "label": "Femtech", "value": "femtech" },
+      { "label": "Fintech & Insurtech", "value": "fintech_insurtech" },
+      { "label": "Healthcare & Life Sciences", "value": "healthcare_life_sciences" },
+      { "label": "HR Tech & Smart Workforce", "value": "hr_tech_smart_workforce" },
+      {
+        "label": "Industry 4.0 & Advanced Manufacturing",
+        "value": "industry_4_advanced_manufacturing"
+      },
+      { "label": "Lifestyle, Personal Care & D2C", "value": "lifestyle_personalcare_d2c" },
+      { "label": "Marketing Tech & MICE", "value": "marketing_tech_mice" },
+      { "label": "Media & Entertainment", "value": "media_entertainment" },
+      { "label": "PropTech, Legal Tech & RegTech", "value": "proptech_legaltech_regtech" },
+      { "label": "Retail Tech", "value": "retail_tech" },
+      { "label": "SaaS, Software & IT/ITES", "value": "saas_software_it_ites" },
+      { "label": "Smart Cities & E-Governance", "value": "smart_cities_e_governance" },
+      {
+        "label": "Social Impact, Rural Livelihood & Sustainability",
+        "value": "social_impact_rural_livelihood_sustainability"
+      },
+      { "label": "Sports Tech & Gaming", "value": "sports_tech_gaming" },
+      { "label": "Supply Chain & Logistics", "value": "supply_chain_logistics" },
+      { "label": "Telecom, Networking & Hardware", "value": "telecom_networking_hardware" },
+      { "label": "TextileTech & Fashion", "value": "textiletech_fashion" },
+      { "label": "Travel & Tourism", "value": "travel_tourism" },
+      { "label": "Web3.0, Blockchain, VR/AR", "value": "web3_blockchain_vr_ar" }
+    ]
+  },
+  {
+    "name": "why_attending",
+    "label": "Why are you attending?",
+    "type": "select",
+    "required": true,
+    "options": [
+      { "label": "Meet global stakeholders", "value": "meetStakeholders" },
+      { "label": "Learn about new technologies and trends", "value": "learnTechnologies" },
+      { "label": "Network with industry leaders", "value": "network" },
+      { "label": "Source for innovative solutions", "value": "sourceSolutions" },
+      { "label": "Fundraising and investment opportunities", "value": "fundraising" },
+      { "label": "Explore startup ecosystem", "value": "exploreStartupEcosystem" },
+      { "label": "Explore India & TN's various offerings", "value": "exploreIndiaTN" },
+      { "label": "Lead Generation", "value": "leadGeneration" }
+    ]
+  }
+]

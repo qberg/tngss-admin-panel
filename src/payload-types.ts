@@ -980,10 +980,6 @@ export interface AttendeePass {
    */
   organisation?: string | null;
   /**
-   * Original visitor_id from PostgreSQL (links to booking)
-   */
-  legacy_visitor_id: string;
-  /**
    * Email of person who made the booking (may differ from attendee)
    */
   registration_email?: string | null;
@@ -995,21 +991,108 @@ export interface AttendeePass {
   registration_state?: string | null;
   registration_country?: string | null;
   /**
-   * Profile type from registration
+   * From visitor_data.organisationType - key for user categorization
    */
-  profile_type?: string | null;
+  organisation_type:
+    | 'startup'
+    | 'aspirants_individuals'
+    | 'incubation_acceleration'
+    | 'investors'
+    | 'government'
+    | 'industry_corporate'
+    | 'mentor_sme'
+    | 'ecosystem_service_provider'
+    | 'others';
   /**
-   * Sector of interest
+   * From visitor_data.profileType - detailed user categorization
    */
-  sector_interested?: string | null;
+  profile_type:
+    | 'dpii'
+    | 'non_dpiit'
+    | 'college_student'
+    | 'working_professional'
+    | 'state_government'
+    | 'union_government'
+    | 'international'
+    | 'banks'
+    | 'hnis'
+    | 'angel_investor'
+    | 'venture_capitalists'
+    | 'angel_networks'
+    | 'family_office'
+    | 'private_equity'
+    | 'revenue_based_financing'
+    | 'venture_debt'
+    | 'limited_partners'
+    | 'mentor'
+    | 'subject_matter_expert'
+    | 'education_institution'
+    | 'business_social_forums'
+    | 'startup_community'
+    | 'ngo'
+    | 'media_agency'
+    | 'r&d_agency'
+    | 'legal_compliance_services'
+    | 'consulting_advisory_services'
+    | 'coworking_space'
+    | 'makerspace'
+    | 'financial_services'
+    | 'technology_services'
+    | 'marketing_branding_services'
+    | 'design_agency'
+    | 'industry_association'
+    | 'incubators'
+    | 'accelerators'
+    | 'corporates'
+    | 'none';
   /**
-   * Type of organisation
+   * From visitor_data.sectorInterested - sector user is interested in
    */
-  organisation_type?: string | null;
+  sector_interested:
+    | 'sector_agnostic'
+    | 'aerospace_defence_spacetech'
+    | 'agriculture_foodtech'
+    | 'ai_ml_iot'
+    | 'art_culture_architecture'
+    | 'automotive_ev_smart_mobility'
+    | 'blue_economy'
+    | 'chemicals_materials'
+    | 'circular_economy'
+    | 'climate_tech_clean_energy'
+    | 'data_mining_analytics'
+    | 'edutech'
+    | 'femtech'
+    | 'fintech_insurtech'
+    | 'healthcare_life_sciences'
+    | 'hr_tech_smart_workforce'
+    | 'industry_4_advanced_manufacturing'
+    | 'lifestyle_personalcare_d2c'
+    | 'marketing_tech_mice'
+    | 'media_entertainment'
+    | 'proptech_legaltech_regtech'
+    | 'retail_tech'
+    | 'saas_software_it_ites'
+    | 'smart_cities_e_governance'
+    | 'social_impact_rural_livelihood_sustainability'
+    | 'sports_tech_gaming'
+    | 'supply_chain_logistics'
+    | 'telecom_networking_hardware'
+    | 'textiletech_fashion'
+    | 'travel_tourism'
+    | 'web3_blockchain_vr_ar';
   /**
    * Reason for attending from registration
    */
-  why_attending?: string | null;
+  why_attending:
+    | 'meetStakeholders'
+    | 'learnTechnologies'
+    | 'network'
+    | 'sourceSolutions'
+    | 'fundraising'
+    | 'exploreStartupEcosystem'
+    | 'exploreIndiaTN'
+    | 'leadGeneration'
+    | 'funding';
   /**
    * Website URL from registration
    */
@@ -1018,6 +1101,10 @@ export interface AttendeePass {
    * When pass was originally created in PostgreSQL
    */
   legacy_created_at?: string | null;
+  /**
+   * Original visitor_id from PostgreSQL (links to booking)
+   */
+  legacy_visitor_id: string;
   /**
    * Has attendee checked in at event?
    */
@@ -1034,6 +1121,10 @@ export interface AttendeePass {
     | number
     | boolean
     | null;
+  /**
+   * Notes from data migration (e.g., value mappings applied)
+   */
+  migration_notes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2003,20 +2094,21 @@ export interface AttendeePassesSelect<T extends boolean = true> {
   mobile?: T;
   designation?: T;
   organisation?: T;
-  legacy_visitor_id?: T;
   registration_email?: T;
   registration_organisation?: T;
   registration_city?: T;
   registration_state?: T;
   registration_country?: T;
+  organisation_type?: T;
   profile_type?: T;
   sector_interested?: T;
-  organisation_type?: T;
   why_attending?: T;
   website?: T;
   legacy_created_at?: T;
+  legacy_visitor_id?: T;
   checked_in?: T;
   checkin_data?: T;
+  migration_notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

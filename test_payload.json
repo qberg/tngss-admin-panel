@@ -1,0 +1,13 @@
+{
+  "pass_id": "TNGSSV_TEST_INDUSTRY_2",
+  "name": "Corporate Test User",
+  "email": "test@industrycorp.com",
+  "mobile": "+919999999996",
+  "visitor_id": "test-industry-uuid-2",
+  "conference_name": "TNGSS Visitor",
+  "visitor_data": {
+    "organisationType": "industry_corporate",
+    "profileType": "",
+    "sectorIntrested": "automotive_ev_smart_mobility"
+  }
+}

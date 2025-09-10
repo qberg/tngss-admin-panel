@@ -40,3 +40,11 @@ pm2 start .next/standalone/server.js \
 ```bash
 npx payload run scripts/migrate-attendees.js test
 ```
+
+## API Endpoints
+
+```bash
+/api/events/filters
+
+/api/networking-sessions/available-venues?type=main_event
+```

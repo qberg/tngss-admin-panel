@@ -99,7 +99,10 @@
       { "label": "Fintech & Insurtech", "value": "fintech_insurtech" },
       { "label": "Healthcare & Life Sciences", "value": "healthcare_life_sciences" },
       { "label": "HR Tech & Smart Workforce", "value": "hr_tech_smart_workforce" },
-      { "label": "Industry 4.0 & Advanced Manufacturing", "value": "industry_4_advanced_manufacturing" },
+      {
+        "label": "Industry 4.0 & Advanced Manufacturing",
+        "value": "industry_4_advanced_manufacturing"
+      },
       { "label": "Lifestyle, Personal Care & D2C", "value": "lifestyle_personalcare_d2c" },
       { "label": "Marketing Tech & MICE", "value": "marketing_tech_mice" },
       { "label": "Media & Entertainment", "value": "media_entertainment" },
@@ -107,7 +110,10 @@
       { "label": "Retail Tech", "value": "retail_tech" },
       { "label": "SaaS, Software & IT/ITES", "value": "saas_software_it_ites" },
       { "label": "Smart Cities & E-Governance", "value": "smart_cities_e_governance" },
-      { "label": "Social Impact, Rural Livelihood & Sustainability", "value": "social_impact_rural_livelihood_sustainability" },
+      {
+        "label": "Social Impact, Rural Livelihood & Sustainability",
+        "value": "social_impact_rural_livelihood_sustainability"
+      },
       { "label": "Sports Tech & Gaming", "value": "sports_tech_gaming" },
       { "label": "Supply Chain & Logistics", "value": "supply_chain_logistics" },
       { "label": "Telecom, Networking & Hardware", "value": "telecom_networking_hardware" },
@@ -130,4 +136,3 @@
     ]
   }
 ]
-    

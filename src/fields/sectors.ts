@@ -3,6 +3,7 @@ import type { Field } from 'payload'
 export const sectorsField: Field = {
   name: 'sector_interested',
   type: 'select',
+  label: 'Sector Interested In',
   required: true,
   options: [
     { label: 'Sector Agnostic', value: 'sector_agnostic' },
