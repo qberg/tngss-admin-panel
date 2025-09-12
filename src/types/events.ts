@@ -17,6 +17,7 @@ export interface ExternalRegistrationData {
   designation: string
   organization_name: string
   ticket: string
+  sector?: string
 }
 
 export interface ExternalAPIResponse {
@@ -26,11 +27,12 @@ export interface ExternalAPIResponse {
 }
 
 export interface ExternalAPIResponseWithMeta extends ExternalAPIResponse {
-  meta?: {
-    total_count: number
-    access_level: 'FULL' | 'MASKED' | 'LIMITED' | 'NONE'
-    filtered_by_role: string
-    accessed_at: string
-    user_id: string
+  pagination?: {
+    current_page: number
+    per_page: number
+    total_records: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
   }
 }

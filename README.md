@@ -48,3 +48,27 @@ npx payload run scripts/migrate-attendees.js test
 
 /api/networking-sessions/available-venues?type=main_event
 ```
+
+```
+Event registration Approval or reject status update @917094606683  Bro
+
+API url : https://dev.tngss.startuptn.in/event-service/v2/event/registration-status/update
+Method : PUT
+Payload in json :
+
+{
+"_id":"68bfa0d7063736b3f0e3f923",
+"status":"approved"
+}
+// status enum: "rejected","approved"
+
+Bearer token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjhiMzMxNzMxZDRlYmVmNzliOGM3ODZkIiwiaWF0IjoxNzU2NTc1Mzc1LCJleHAiOjE3NjUyMTUzNzV9.n8s-3SZfWQJy-lMkWX6jLWSC1cPjnlLWBjjJMc3vxBY
+```
+
+```
+Api URL : https://tngss.startuptn.in/event-service/v2/event/user-registrations/statistics?event_id=68bfa0d7063736b3f0e3f923
+
+Method : GET
+
+Bearer token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjhiMzMxNzMxZDRlYmVmNzliOGM3ODZkIiwiaWF0IjoxNzU2NTc1Mzc1LCJleHAiOjE3NjUyMTUzNzV9.n8s-3SZfWQJy-lMkWX6jLWSC1cPjnlLWBjjJMc3vxBY
+```

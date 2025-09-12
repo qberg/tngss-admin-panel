@@ -3,14 +3,34 @@ import { headersWithCors } from 'payload'
 
 export const getEventsFilters: PayloadHandler = async (req) => {
   try {
+    const eventType = req.query?.type as string
+
+    if (eventType && !['main_event', 'partner_event'].includes(eventType)) {
+      return Response.json(
+        { error: 'Invalid event type. Use "main_event" or "partner_event"' },
+        {
+          status: 400,
+          headers: headersWithCors({
+            headers: new Headers(),
+            req,
+          }),
+        },
+      )
+    }
+
+    const whereClause: any = {
+      ...(req.query?.publicOnly === 'true' && {
+        isPublic: { equals: true },
+      }),
+      ...(eventType && {
+        main_or_partner: { equals: eventType },
+      }),
+    }
+
     const events = await req.payload.find({
       collection: 'events',
       limit: 1000,
-      where: {
-        ...(req.query?.publicOnly === 'true' && {
-          isPublic: { equals: true },
-        }),
-      },
+      where: whereClause,
     })
 
     const dateTimeMap: Record<string, { startTimes: string[]; endTimes: string[] }> = {}
@@ -196,14 +216,11 @@ export const getEventsFilters: PayloadHandler = async (req) => {
       ...new Set(events.docs.map((event) => event.partner_event_venue?.event_mode).filter(Boolean)),
     ].sort()
 
-    const event_types = [
-      ...new Set(events.docs.map((event) => event.main_or_partner).filter(Boolean)),
-    ].sort()
-
     const registration_modes = [
       ...new Set(events.docs.map((event) => event.registeration_mode).filter(Boolean)),
     ].sort()
 
+    // Hall and Zone processing (typically for main_event)
     const hallIds: string[] = []
     const zoneIds: string[] = []
 
@@ -289,6 +306,7 @@ export const getEventsFilters: PayloadHandler = async (req) => {
       hallZoneMap[hallId].sort((a, b) => a.name.localeCompare(b.name))
     })
 
+    // Access levels (only for main_event)
     const accessLevelIds: string[] = []
     events.docs.forEach((event) => {
       if (event.main_or_partner === 'main_event') {
@@ -322,45 +340,96 @@ export const getEventsFilters: PayloadHandler = async (req) => {
       slug: accessLevel.slug,
     }))
 
-    return Response.json(
-      {
-        dates,
-        start_times,
-        end_times,
-        all_times,
-        date_time_map: dateTimeMap,
+    // Build response object based on event type
+    const baseResponse = {
+      dates,
+      start_times,
+      end_times,
+      all_times,
+      date_time_map: dateTimeMap,
+      formats,
+      tags,
+      event_modes,
+      registration_modes,
+      meta: {
+        totalEvents: events.totalDocs,
+        totalDates: dates.length,
+        totalStartTimes: start_times.length,
+        totalEndTimes: end_times.length,
+        totalAllTimes: all_times.length,
+        totalFormats: formats.length,
+        totalTags: tags.length,
+        eventType: eventType || 'all',
+      },
+    }
 
-        formats,
-        tags,
-        cities,
-        halls,
-        zones,
-        hall_zone_map: hallZoneMap,
-        access_levels,
-
-        event_modes,
-        event_types,
-        registration_modes,
-
-        meta: {
-          totalEvents: events.totalDocs,
-          totalDates: dates.length,
-          totalStartTimes: start_times.length,
-          totalEndTimes: end_times.length,
-          totalAllTimes: all_times.length,
-          totalFormats: formats.length,
-          totalTags: tags.length,
-          totalCities: cities.length,
-          totalAccessLevels: access_levels.length,
+    // Add event-type specific fields
+    if (eventType === 'main_event') {
+      return Response.json(
+        {
+          ...baseResponse,
+          halls,
+          zones,
+          hall_zone_map: hallZoneMap,
+          access_levels,
+          meta: {
+            ...baseResponse.meta,
+            totalHalls: halls.length,
+            totalZones: zones.length,
+            totalAccessLevels: access_levels.length,
+          },
         },
-      },
-      {
-        headers: headersWithCors({
-          headers: new Headers(),
-          req,
-        }),
-      },
-    )
+        {
+          headers: headersWithCors({
+            headers: new Headers(),
+            req,
+          }),
+        },
+      )
+    } else if (eventType === 'partner_event') {
+      return Response.json(
+        {
+          ...baseResponse,
+          cities,
+          meta: {
+            ...baseResponse.meta,
+            totalCities: cities.length,
+          },
+        },
+        {
+          headers: headersWithCors({
+            headers: new Headers(),
+            req,
+          }),
+        },
+      )
+    } else {
+      // Return all fields if no specific type is requested
+      return Response.json(
+        {
+          ...baseResponse,
+          cities,
+          halls,
+          zones,
+          hall_zone_map: hallZoneMap,
+          access_levels,
+          event_types: ['main_event', 'partner_event'],
+          meta: {
+            ...baseResponse.meta,
+            totalCities: cities.length,
+            totalHalls: halls.length,
+            totalZones: zones.length,
+            totalAccessLevels: access_levels.length,
+          },
+        },
+        {
+          headers: headersWithCors({
+            headers: new Headers(),
+            req,
+          }),
+        },
+      )
+    }
   } catch (error) {
     console.error('Error fetching filters:', error)
     return Response.json(

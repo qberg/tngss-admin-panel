@@ -24,7 +24,7 @@ export default async function HomePage() {
             width={65}
           />
         </picture>
-        {!user && <h1>Welcome to TNGSS Admin Panel, Powered by Payload</h1>}
+        {!user && <h1>Welcome to TNGSS Admin Panel</h1>}
         {user && <h1>Welcome back, {user.email}</h1>}
         <div className="links">
           <a className="admin" href={payloadConfig.routes.admin}>

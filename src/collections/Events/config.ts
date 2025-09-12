@@ -10,6 +10,7 @@ import { isPublic } from '@/fields/isPublic'
 import { getEventsFilters } from '@/endpoints/events/filters'
 import { getAvailableDates } from '@/endpoints/events/availableDates'
 import { contentManager } from '../Users/access/contentManager'
+import { approvalSettingsField } from '@/fields/events/approvalSettings'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -353,13 +354,14 @@ export const Events: CollectionConfig = {
             },
 
             fcfsSettingsField,
+            approvalSettingsField,
           ],
         },
 
         {
           label: '👥 View Registrations',
           admin: {
-            condition: (data) => ['fcfs', 'approval'].includes(data?.registeration_mode),
+            condition: (data) => ['fcfs'].includes(data?.registeration_mode),
           },
           fields: [
             {
@@ -368,6 +370,23 @@ export const Events: CollectionConfig = {
               admin: {
                 components: {
                   Field: '@/components/admin/EventRegistrations',
+                },
+              },
+            },
+          ],
+        },
+        {
+          label: '👥 Approve Registrations',
+          admin: {
+            condition: (data) => ['approval'].includes(data?.registeration_mode),
+          },
+          fields: [
+            {
+              name: 'approvals_display',
+              type: 'ui',
+              admin: {
+                components: {
+                  Field: '@/components/admin/events/Registrations',
                 },
               },
             },

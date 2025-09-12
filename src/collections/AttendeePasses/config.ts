@@ -4,6 +4,7 @@ import { profileField } from '@/fields/profile'
 import { sectorsField } from '@/fields/sectors'
 import { whyAttendingField } from '@/fields/whyAttending'
 import type { CollectionConfig } from 'payload'
+import { boolean } from 'zod'
 
 export const AttendeePasses: CollectionConfig = {
   slug: 'attendee-passes',
@@ -218,6 +219,17 @@ export const AttendeePasses: CollectionConfig = {
       type: 'textarea',
       admin: {
         description: 'Notes from data migration (e.g., value mappings applied)',
+        readOnly: true,
+      },
+    },
+
+    {
+      name: 'upgraded',
+      type: 'checkbox',
+      label: 'Is Upgrade',
+      defaultValue: false,
+      admin: {
+        description: 'Indicates if this is an upgrade from a previous pass type',
         readOnly: true,
       },
     },

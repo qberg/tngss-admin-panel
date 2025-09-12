@@ -1,6 +1,7 @@
 import { default as default_ff6acbaf88fca39e545ae7edf31906ff } from '@/components/admin/DownloadTemplateButton'
 import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { default as default_d399306e9eb751dd1037d9f56fc69750 } from '@/components/admin/EventRegistrations'
+import { default as default_0eeebb354f120e1e88080089b0218ecf } from '@/components/admin/events/Registrations'
 import { SortBy as SortBy_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { SelectionToUseField as SelectionToUseField_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { FieldsToExport as FieldsToExport_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
@@ -44,6 +45,7 @@ export const importMap = {
   "@/components/admin/DownloadTemplateButton#default": default_ff6acbaf88fca39e545ae7edf31906ff,
   "@payloadcms/plugin-import-export/rsc#ExportListMenuItem": ExportListMenuItem_cdf7e044479f899a31f804427d568b36,
   "@/components/admin/EventRegistrations#default": default_d399306e9eb751dd1037d9f56fc69750,
+  "@/components/admin/events/Registrations#default": default_0eeebb354f120e1e88080089b0218ecf,
   "@payloadcms/plugin-import-export/rsc#SortBy": SortBy_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#SelectionToUseField": SelectionToUseField_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/plugin-import-export/rsc#FieldsToExport": FieldsToExport_cdf7e044479f899a31f804427d568b36,

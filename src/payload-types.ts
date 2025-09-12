@@ -676,6 +676,24 @@ export interface Event {
       auto_close_registeration_at?: number | null;
     };
   };
+  /**
+   * Settings specific to approval based event registeration
+   */
+  approval_settings?: {
+    registeration: {
+      from_date: string;
+      to_date: string;
+    };
+    /**
+     * Set the maximum number of attendees for this event
+     */
+    capacity_settings?: {
+      /**
+       * Maximum number of people who can attend
+       */
+      max_capacity?: number | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1125,6 +1143,10 @@ export interface AttendeePass {
    * Notes from data migration (e.g., value mappings applied)
    */
   migration_notes?: string | null;
+  /**
+   * Indicates if this is an upgrade from a previous pass type
+   */
+  upgraded?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1786,6 +1808,21 @@ export interface EventsSelect<T extends boolean = true> {
               auto_close_registeration_at?: T;
             };
       };
+  approval_settings?:
+    | T
+    | {
+        registeration?:
+          | T
+          | {
+              from_date?: T;
+              to_date?: T;
+            };
+        capacity_settings?:
+          | T
+          | {
+              max_capacity?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2109,6 +2146,7 @@ export interface AttendeePassesSelect<T extends boolean = true> {
   checked_in?: T;
   checkin_data?: T;
   migration_notes?: T;
+  upgraded?: T;
   updatedAt?: T;
   createdAt?: T;
 }
