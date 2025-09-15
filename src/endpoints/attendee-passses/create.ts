@@ -18,6 +18,7 @@ const AttendeeSchema = z.object({
   pass_data: z.json().optional(),
   visitor_data: z.json().optional(),
   checkin_data: z.json().optional(),
+  upgrade: z.boolean().default(false),
 })
 
 const BulkSchema = z.object({
@@ -313,6 +314,87 @@ export const createAttendeePass: PayloadHandler = async (req) => {
       )
     }
 
+    const isUpgrade = result.data.upgrade === true
+
+    if (isUpgrade) {
+      console.log(`Processing upgrade for email: ${result.data.email}`)
+
+      const existingPasses = await req.payload.find({
+        collection: 'attendee-passes',
+        where: {
+          email: { equals: result.data.email.toLowerCase() },
+        },
+        limit: 10,
+      })
+
+      if (existingPasses.totalDocs === 0) {
+        return Response.json(
+          {
+            success: false,
+            error: 'No existing pass found for upgrade',
+            message: `No pass found for email ${result.data.email}`,
+          },
+          {
+            status: 404,
+            headers: headersWithCors({ headers: new Headers(), req }),
+          },
+        )
+      }
+
+      const transformedData = transformAttendee(result.data)
+
+      const passToUpgrade = existingPasses.docs[0]
+
+      const upgradedPass = await req.payload.update({
+        collection: 'attendee-passes',
+        id: passToUpgrade.id,
+        data: {
+          pass_type: transformedData.pass_type,
+          upgrade: true,
+
+          // Update pass_id to the new one
+          pass_id: transformedData.pass_id,
+
+          // Keep existing personal data but update if provided
+          name: transformedData.name || passToUpgrade.name,
+          mobile: transformedData.mobile || passToUpgrade.mobile,
+          designation: transformedData.designation || passToUpgrade.designation,
+          organisation: transformedData.organisation || passToUpgrade.organisation,
+          legacy_visitor_id: transformedData.legacy_visitor_id || passToUpgrade.legacy_visitor_id,
+          legacy_created_at: transformedData.legacy_created_at || passToUpgrade.legacy_created_at,
+
+          // Add upgrade metadata
+          migration_notes: passToUpgrade.migration_notes
+            ? `${passToUpgrade.migration_notes}; UPGRADED: ${passToUpgrade.pass_type} → ${transformedData.pass_type} (${new Date().toISOString()})`
+            : `UPGRADED: ${passToUpgrade.pass_type} → ${transformedData.pass_type} (${new Date().toISOString()})`,
+        },
+        overrideAccess: true,
+      })
+
+      console.log(
+        `API: Upgraded pass ${passToUpgrade.pass_id} → ${transformedData.pass_id} for ${result.data.email}`,
+      )
+
+      return Response.json(
+        {
+          success: true,
+          upgraded: true,
+          data: {
+            id: upgradedPass.id,
+            pass_id: upgradedPass.pass_id,
+            name: upgradedPass.name,
+            old_pass_type: passToUpgrade.pass_type,
+            new_pass_type: upgradedPass.pass_type,
+          },
+        },
+        {
+          status: 200,
+          headers: headersWithCors({ headers: new Headers(), req }),
+        },
+      )
+    }
+
+    // No one has upgraded, just good old visitor pass creation
     // Check for existing pass
     const existing = await req.payload.find({
       collection: 'attendee-passes',
@@ -446,58 +528,118 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
     }
 
     const created = []
+    const upgraded = []
     const errors = []
 
-    // Process each attendee with proper transformation
+    // Process each attendee with proper transformation and upgrade logic
     for (const attendee of result.data.attendees) {
       try {
-        // Check duplicates
-        const existing = await req.payload.find({
-          collection: 'attendee-passes',
-          where: { pass_id: { equals: attendee.pass_id } },
-          limit: 1,
-        })
+        const isUpgrade = attendee.upgrade === true
 
-        if (existing.totalDocs > 0) {
-          errors.push({ pass_id: attendee.pass_id, error: 'Already exists' })
-          continue
+        if (isUpgrade) {
+          // UPGRADE LOGIC
+          const existingPasses = await req.payload.find({
+            collection: 'attendee-passes',
+            where: {
+              email: { equals: attendee.email.toLowerCase() },
+            },
+            limit: 1,
+          })
+
+          if (existingPasses.totalDocs === 0) {
+            errors.push({
+              pass_id: attendee.pass_id,
+              email: attendee.email,
+              error: 'No existing pass found for upgrade',
+            })
+            continue
+          }
+
+          const transformedData = transformAttendee(attendee)
+          const passToUpgrade = existingPasses.docs[0]
+
+          const upgradedPass = await req.payload.update({
+            collection: 'attendee-passes',
+            id: passToUpgrade.id,
+            data: {
+              pass_type: transformedData.pass_type,
+              pass_id: transformedData.pass_id,
+              name: transformedData.name || passToUpgrade.name,
+              mobile: transformedData.mobile || passToUpgrade.mobile,
+              designation: transformedData.designation || passToUpgrade.designation,
+              organisation: transformedData.organisation || passToUpgrade.organisation,
+              migration_notes: passToUpgrade.migration_notes
+                ? `${passToUpgrade.migration_notes}; BULK UPGRADED: ${passToUpgrade.pass_type} → ${transformedData.pass_type} (${new Date().toISOString()})`
+                : `BULK UPGRADED: ${passToUpgrade.pass_type} → ${transformedData.pass_type} (${new Date().toISOString()})`,
+            },
+            overrideAccess: true,
+          })
+
+          upgraded.push({
+            pass_id: upgradedPass.pass_id,
+            email: upgradedPass.email,
+            name: upgradedPass.name,
+            old_pass_type: passToUpgrade.pass_type,
+            new_pass_type: upgradedPass.pass_type,
+          })
+        } else {
+          // NORMAL CREATION LOGIC
+          // Check duplicates
+          const existing = await req.payload.find({
+            collection: 'attendee-passes',
+            where: { pass_id: { equals: attendee.pass_id } },
+            limit: 1,
+          })
+
+          if (existing.totalDocs > 0) {
+            errors.push({ pass_id: attendee.pass_id, error: 'Already exists' })
+            continue
+          }
+
+          // Transform data with proper mapping
+          const transformedData = transformAttendee(attendee)
+
+          const newAttendee = await req.payload.create({
+            collection: 'attendee-passes',
+            // @ts-expect-error any
+            data: transformedData,
+            overrideAccess: true,
+          })
+
+          created.push({
+            pass_id: newAttendee.pass_id,
+            name: newAttendee.name,
+            migration_notes: transformedData.migration_notes || undefined,
+          })
         }
-
-        // Transform data with proper mapping
-        const transformedData = transformAttendee(attendee)
-
-        const newAttendee = await req.payload.create({
-          collection: 'attendee-passes',
-          // @ts-expect-error any
-          data: transformedData,
-          overrideAccess: true,
-        })
-
-        created.push({
-          pass_id: newAttendee.pass_id,
-          name: newAttendee.name,
-          migration_notes: transformedData.migration_notes || undefined,
-        })
       } catch (error) {
         errors.push({
           pass_id: attendee.pass_id,
+          email: attendee.email,
           // @ts-expect-error not yet
-          error: error.message || 'Creation failed',
+          error: error.message || 'Processing failed',
         })
       }
     }
 
     // Log bulk operation
-    console.log(`API: Bulk created ${created.length} passes via token ${token?.substring(0, 8)}...`)
+    console.log(
+      `API: Bulk processed via token ${token?.substring(0, 8)}... - Created: ${created.length}, Upgraded: ${upgraded.length}, Errors: ${errors.length}`,
+    )
 
     return Response.json(
       {
-        success: created.length > 0,
-        message: `Created: ${created.length}, Failed: ${errors.length}`,
-        data: { created, errors, total: result.data.attendees.length },
+        success: created.length + upgraded.length > 0,
+        message: `Created: ${created.length}, Upgraded: ${upgraded.length}, Failed: ${errors.length}`,
+        data: {
+          created,
+          upgraded,
+          errors,
+          total: result.data.attendees.length,
+        },
       },
       {
-        status: errors.length > 0 ? 207 : 201,
+        status: errors.length > 0 ? 207 : upgraded.length > 0 ? 200 : 201,
         headers: headersWithCors({ headers: new Headers(), req }),
       },
     )

@@ -361,7 +361,13 @@ export const Events: CollectionConfig = {
         {
           label: '👥 View Registrations',
           admin: {
-            condition: (data) => ['fcfs'].includes(data?.registeration_mode),
+            condition: (data) => {
+              const hasId = Boolean(data?.id)
+              const isFcfs = data?.registeration_mode === 'fcfs'
+              const shouldShow = hasId && isFcfs
+
+              return shouldShow
+            },
           },
           fields: [
             {
@@ -378,7 +384,13 @@ export const Events: CollectionConfig = {
         {
           label: '👥 Approve Registrations',
           admin: {
-            condition: (data) => ['approval'].includes(data?.registeration_mode),
+            condition: (data) => {
+              const hasId = Boolean(data?.id)
+              const isApproval = data?.registeration_mode === 'approval'
+              const shouldShow = hasId && isApproval
+
+              return shouldShow
+            },
           },
           fields: [
             {

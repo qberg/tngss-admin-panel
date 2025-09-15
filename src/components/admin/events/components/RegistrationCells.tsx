@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/ui/Checkbox'
 import { ActionButton } from '@/components/ui/table/ActionButton'
 import { StatusBadge } from '@/components/ui/table/StatusBadge'
 import { TableCell } from '@/components/ui/table/TableCell'
@@ -111,4 +112,59 @@ const ActionsCell = ({ registration, onStatusUpdate }: ActionsCellProps) => {
   )
 }
 
-export { NameCell, ContactCell, OrganizationCell, StatusCell, ActionsCell }
+interface SelectionCellProps {
+  checked?: boolean
+  onCheckedChange?: (checked: boolean) => void
+  disabled?: boolean
+}
+
+const SelectionCell = ({
+  checked = false,
+  onCheckedChange,
+  disabled = false,
+}: SelectionCellProps) => {
+  return (
+    <td className="px-6 py-4">
+      <div className="flex items-center justify-center">
+        <Checkbox checked={checked} onCheckedChange={onCheckedChange} disabled={disabled} />
+      </div>
+    </td>
+  )
+}
+
+interface HeaderSelectionCellProps {
+  checked?: boolean
+  indeterminate?: boolean
+  onCheckedChange?: (checked: boolean) => void
+}
+
+const HeaderSelectionCell = ({
+  checked = false,
+  indeterminate = false,
+  onCheckedChange,
+}: HeaderSelectionCellProps) => {
+  return (
+    <th className="px-6 py-4">
+      <div className="flex items-center justify-center">
+        <div className="relative">
+          <Checkbox checked={checked} onCheckedChange={onCheckedChange} />
+          {indeterminate && !checked && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-2 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+            </div>
+          )}
+        </div>
+      </div>
+    </th>
+  )
+}
+
+export {
+  NameCell,
+  ContactCell,
+  OrganizationCell,
+  StatusCell,
+  ActionsCell,
+  SelectionCell,
+  HeaderSelectionCell,
+}

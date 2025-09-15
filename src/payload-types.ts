@@ -1146,7 +1146,7 @@ export interface AttendeePass {
   /**
    * Indicates if this is an upgrade from a previous pass type
    */
-  upgraded?: boolean | null;
+  upgrade?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2146,7 +2146,7 @@ export interface AttendeePassesSelect<T extends boolean = true> {
   checked_in?: T;
   checkin_data?: T;
   migration_notes?: T;
-  upgraded?: T;
+  upgrade?: T;
   updatedAt?: T;
   createdAt?: T;
 }

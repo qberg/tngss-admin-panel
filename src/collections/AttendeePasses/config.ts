@@ -4,7 +4,6 @@ import { profileField } from '@/fields/profile'
 import { sectorsField } from '@/fields/sectors'
 import { whyAttendingField } from '@/fields/whyAttending'
 import type { CollectionConfig } from 'payload'
-import { boolean } from 'zod'
 
 export const AttendeePasses: CollectionConfig = {
   slug: 'attendee-passes',
@@ -16,7 +15,7 @@ export const AttendeePasses: CollectionConfig = {
     create: () => false,
     read: () => true,
     update: () => false,
-    delete: () => false,
+    delete: () => true,
   },
   admin: {
     useAsTitle: 'name',
@@ -224,7 +223,7 @@ export const AttendeePasses: CollectionConfig = {
     },
 
     {
-      name: 'upgraded',
+      name: 'upgrade',
       type: 'checkbox',
       label: 'Is Upgrade',
       defaultValue: false,
@@ -234,27 +233,4 @@ export const AttendeePasses: CollectionConfig = {
       },
     },
   ],
-}
-
-{
-  /*
-
-pass_id       | TNGSSV_10914
-visitor_id    | 325cf3e3-7233-40af-922a-4d111904fd89
-conference_id | f171cd44-8007-4ad2-beea-c487c1827246
-pass_data     | {"name": "John Doe", "email": "info+2@showbay.io", "gender": "male", "mobile": "+91900323498", "designation": "Tester", "organisation": "Kameleon Technologies"}
-created_at    | 2025-08-24 18:58:44.504989+00
-updated_at    | 2025-08-24 18:58:44.504989+00
-checkin_data  |
-
-
-
-visitor_id   | 325cf3e3-7233-40af-922a-4d111904fd89
-visitor_data | {"city": "Tiruchirappalli", "name": "Kameleon Technologies", "email": "info+1@showbay.io", "state": "TN", "mobile": "+91900323498", "country": "IN", "pincode": "620005", "personName": "John Doe", "profileType": "corporates", "visitorData": [{"name": "John Doe", "email": "info+2@showbay.io", "gender": "male", "mobile": "+91900323498", "designation": "Tester", "organisation": "Kameleon Technologies"}], "organisation": "Kameleon Technologies", "conference_id": "f171cd44-8007-4ad2-beea-c487c1827246", "sectorIntrested": "art_culture_architecture", "organisationType": "ecosystem_enablers", "personDesignation": "Tester"}
-created_at   | 2025-08-24 18:58:44.503315+00
-updated_at   | 2025-08-24 18:58:44.503315+00
-expo_id      | 0632d025-28d8-4650-92ed-f240a695d023
-order_id     |
-
-*/
 }
