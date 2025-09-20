@@ -12,6 +12,7 @@ import { approvalSettingsField } from '@/fields/events/approvalSettings'
 import { softDeleteField } from '@/fields/softDelete'
 import { readNonDeleted } from '../Users/access/softDelete'
 import { getMainEventsFilters } from '@/endpoints/events/mainEventsFilters'
+import { getMainEventsList } from '@/endpoints/events/mainEventList'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -48,6 +49,11 @@ export const Events: CollectionConfig = {
       path: '/main_events/filters',
       method: 'get',
       handler: getMainEventsFilters,
+    },
+    {
+      path: '/main_events/list',
+      method: 'get',
+      handler: getMainEventsList,
     },
     {
       path: '/available-dates',
