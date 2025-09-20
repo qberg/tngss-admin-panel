@@ -42,6 +42,8 @@ import { WhySponsorWebPage } from './globals/WhySponsorWebPage/config'
 import { SponsorFormWebPage } from './globals/SponsorFormWebPage/config'
 import { customBeforeEmail } from './emails/beforeEmailHandler'
 import { NetworkingSessions } from './collections/NetworkingSessions/config'
+import { OrganisationRoles } from './collections/OrganisationRoles/config'
+import { getSectors } from './endpoints/sectors'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -72,6 +74,13 @@ export default buildConfig({
       },
     },
   },
+  endpoints: [
+    {
+      path: '/sectors',
+      method: 'get',
+      handler: getSectors,
+    },
+  ],
   // Email Config
   email: nodemailerAdapter({
     defaultFromAddress: process.env.FROM_MAIL || 'events@startuptn.in',
@@ -133,6 +142,7 @@ export default buildConfig({
     Documents,
     AppVersions,
     AttendeePasses,
+    OrganisationRoles,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

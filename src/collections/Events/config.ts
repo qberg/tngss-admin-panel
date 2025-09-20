@@ -1,9 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { anyone } from '../Users/access/anyone'
 import { slugFromTitle } from '@/fields/slug'
 import { scheduleField } from '@/fields/duration'
 import { virtualDetailsField } from '@/fields/virtualDetails'
-import { publicFieldAccess } from '../Users/access/groups'
 import { fcfsSettingsField } from '@/fields/events/fcfsSettings'
 import { auditFields } from '@/fields/audit'
 import { isPublic } from '@/fields/isPublic'
@@ -11,6 +9,9 @@ import { getEventsFilters } from '@/endpoints/events/filters'
 import { getAvailableDates } from '@/endpoints/events/availableDates'
 import { contentManager } from '../Users/access/contentManager'
 import { approvalSettingsField } from '@/fields/events/approvalSettings'
+import { softDeleteField } from '@/fields/softDelete'
+import { readNonDeleted } from '../Users/access/softDelete'
+import { getMainEventsFilters } from '@/endpoints/events/mainEventsFilters'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -23,18 +24,18 @@ export const Events: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: [
       'title',
+      'event_date',
       'main_or_partner',
-      'format',
       'registeration_mode',
       'isPublic',
-      'event_date',
+      'deleted',
     ],
   },
   access: {
     create: contentManager,
-    read: anyone,
+    read: readNonDeleted,
     update: contentManager,
-    delete: contentManager,
+    delete: () => false,
   },
 
   endpoints: [
@@ -42,6 +43,11 @@ export const Events: CollectionConfig = {
       path: '/filters',
       method: 'get',
       handler: getEventsFilters,
+    },
+    {
+      path: '/main_events/filters',
+      method: 'get',
+      handler: getMainEventsFilters,
     },
     {
       path: '/available-dates',
@@ -72,7 +78,6 @@ export const Events: CollectionConfig = {
               name: 'title',
               type: 'text',
               required: true,
-              access: publicFieldAccess,
               label: 'Title of the Event',
               admin: {
                 placeholder: 'Opening Keynote: Future of Technology',
@@ -85,7 +90,6 @@ export const Events: CollectionConfig = {
               name: 'main_or_partner',
               type: 'select',
               required: true,
-              access: publicFieldAccess,
               label: 'Main or Partner Event',
               options: [
                 { label: 'Main Event', value: 'main_event' },
@@ -148,7 +152,6 @@ export const Events: CollectionConfig = {
             {
               name: 'about',
               type: 'textarea',
-              access: publicFieldAccess,
               label: 'About the Event',
               admin: {
                 placeholder:
@@ -209,7 +212,6 @@ export const Events: CollectionConfig = {
                   name: 'event_mode',
                   type: 'select',
                   required: true,
-                  access: publicFieldAccess,
                   label: 'Event Mode',
                   options: [
                     { label: 'Online', value: 'online' },
@@ -221,7 +223,6 @@ export const Events: CollectionConfig = {
                   admin: {
                     condition: (_, siblingData) => Boolean(siblingData?.event_mode === 'online'),
                   },
-                  access: publicFieldAccess,
                   fields: virtualDetailsField,
                 },
                 {
@@ -234,7 +235,6 @@ export const Events: CollectionConfig = {
                       name: 'venue',
                       type: 'text',
                       required: true,
-                      access: publicFieldAccess,
                       label: 'Venue',
                       admin: {
                         placeholder: 'D Block, 7th Floor, Research Park, IIT Madras',
@@ -246,7 +246,6 @@ export const Events: CollectionConfig = {
                       relationTo: 'cities',
                       hasMany: false,
                       required: true,
-                      access: publicFieldAccess,
                       label: 'City',
                       admin: {
                         width: '50%',
@@ -256,7 +255,6 @@ export const Events: CollectionConfig = {
                       name: 'map_url',
                       type: 'text',
                       label: 'Map URL',
-                      access: publicFieldAccess,
                       admin: {
                         width: '100%',
                       },
@@ -277,7 +275,6 @@ export const Events: CollectionConfig = {
               name: 'agenda',
               type: 'array',
               label: 'Agenda of the Event',
-              access: publicFieldAccess,
               fields: [
                 {
                   type: 'row',
@@ -308,7 +305,6 @@ export const Events: CollectionConfig = {
             {
               name: 'speakers',
               type: 'array',
-              access: publicFieldAccess,
               label: 'Event Speakers',
               fields: [
                 {
@@ -333,7 +329,6 @@ export const Events: CollectionConfig = {
               type: 'select',
               required: true,
               defaultValue: 'fcfs',
-              access: publicFieldAccess,
               options: [
                 {
                   label: '🚫 No Registration Required',
@@ -403,6 +398,10 @@ export const Events: CollectionConfig = {
               },
             },
           ],
+        },
+        {
+          label: 'Delete',
+          fields: [softDeleteField],
         },
       ],
     },

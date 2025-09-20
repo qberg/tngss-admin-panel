@@ -18,6 +18,7 @@ export const Zones: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Venue Management',
+    defaultColumns: ['name', 'hall', 'dimensions', 'is_featured'],
   },
   fields: [
     {
@@ -48,9 +49,13 @@ export const Zones: CollectionConfig = {
       label: 'Name of the Zone',
     },
     {
-      name: 'description',
-      type: 'textarea',
-      label: 'Description',
+      name: 'is_featured',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'Is Featured Zone',
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'dimensions',
@@ -66,6 +71,14 @@ export const Zones: CollectionConfig = {
       label: 'Capacity of the Zone',
       admin: {
         placeholder: '100',
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      label: 'Description',
+      admin: {
+        condition: (_, siblingData) => Boolean(siblingData.is_featured === true),
       },
     },
   ],

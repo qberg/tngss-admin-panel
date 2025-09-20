@@ -15,7 +15,7 @@ export const AttendeePasses: CollectionConfig = {
     create: () => false,
     read: () => true,
     update: () => false,
-    delete: () => true,
+    delete: () => false,
   },
   admin: {
     useAsTitle: 'name',
@@ -55,6 +55,18 @@ export const AttendeePasses: CollectionConfig = {
       label: 'Pass Type',
       required: true,
       admin: {
+        readOnly: true,
+      },
+    },
+
+    {
+      name: 'pass_type_id',
+      type: 'text',
+      label: 'Pass Type ID',
+      required: true,
+      index: true,
+      admin: {
+        description: 'UUID identifier for the pass type',
         readOnly: true,
       },
     },

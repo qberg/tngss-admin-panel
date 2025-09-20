@@ -1,24 +1,26 @@
 {
-  "pass_id": "TNGSSD_TEST001",
-  "name": "Test User",
-  "email": "testuser@example.com",
-  "mobile": "+919999999999",
-  "visitor_id": "test-visitor-456",
-  "conference_name": "TNGSS Delegate",
+  "pass_id": "TNGSSD_KISHORE_001",
+  "name": "Kishore",
+  "email": "kishore@minsky.in",
+  "mobile": "+918296866881",
+  "visitor_id": "46d0a5a4-a819-47ec-b032-79d989978227",
+  "conference_name": "TNGSS Conference",
   "upgrade": true,
   "pass_data": {
-    "name": "Test User",
-    "email": "testuser@example.com",
-    "mobile": "+919999999999",
-    "designation": "Senior Developer Delegate",
-    "organisation": "Test Company Delegate"
+    "name": "Kishore",
+    "email": "kishore@minsky.in",
+    "mobile": "+918296866881",
+    "designation": "Co-Founder",
+    "organisation": "Minsky"
   },
   "visitor_data": {
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "country": "India",
-    "profileType": "working_professional",
+    "city": "Chennai",
+    "state": "TN",
+    "country": "IN",
+    "profileType": "non_dpiit",
     "organisationType": "startup",
-    "email": "testuser@example.com"
+    "email": "kishore@minsky.in",
+    "sectorIntrested": "ai_ml_iot",
+    "whyAttend": "exploreStartupEcosystem"
   }
 }

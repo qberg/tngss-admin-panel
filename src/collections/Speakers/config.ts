@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { eventManagerFieldAccess } from '../Users/access/eventManager'
-import { anyone, anyoneFieldAcess } from '../Users/access/anyone'
+import { anyoneFieldAcess } from '../Users/access/anyone'
 import { userFieldAccess } from '../Users/access/user'
 import { durationField } from '@/fields/duration'
 import { bulkOperationsField } from '@/fields/bulkOperations'
@@ -8,6 +8,8 @@ import { auditFields } from '@/fields/audit'
 import { slugField } from '@/fields/slug'
 import { isPublic } from '@/fields/isPublic'
 import { contentManager } from '../Users/access/contentManager'
+import { softDeleteField } from '@/fields/softDelete'
+import { readNonDeleted } from '../Users/access/softDelete'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -36,17 +38,18 @@ export const Speakers: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Speaker Management',
-    defaultColumns: ['name', 'designation', 'assigned_coordinator', 'isPublic'],
+    defaultColumns: ['name', 'designation', 'assigned_coordinator', 'isPublic', 'deleted'],
   },
   access: {
     create: contentManager,
-    read: anyone,
+    read: readNonDeleted,
     update: contentManager,
-    delete: contentManager,
+    delete: () => false,
   },
   fields: [
     slugField,
     isPublic,
+    softDeleteField,
     {
       name: 'speaks_at',
       label: 'Speaks At',

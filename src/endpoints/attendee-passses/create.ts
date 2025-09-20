@@ -8,6 +8,7 @@ const AttendeeSchema = z.object({
   mobile: z.string().min(1),
   visitor_id: z.string().min(1),
   conference_name: z.string().min(1),
+  conference_id: z.string().optional(),
   pass_created_at: z.string().optional(),
   gender: z.string().optional(),
   designation: z.string().optional(),
@@ -24,6 +25,28 @@ const AttendeeSchema = z.object({
 const BulkSchema = z.object({
   attendees: z.array(AttendeeSchema).min(1),
 })
+
+const PASS_TYPE_ID_MAP: Record<string, string> = {
+  'TNGSS Visitor': 'f171cd44-8007-4ad2-beea-c487c1827246',
+  'TNGSS Conference': 'f171cd44-8007-4ad2-beea-c487c1827247',
+}
+const VALID_PASS_TYPE_IDS = Object.values(PASS_TYPE_ID_MAP)
+// @ts-expect-error any
+const getPassTypeId = (data): string => {
+  if (data.conference_id && VALID_PASS_TYPE_IDS.includes(data.pass_type_id)) {
+    return data.conference_id
+  }
+
+  if (
+    data.visitor_data?.conference_id &&
+    VALID_PASS_TYPE_IDS.includes(data.visitor_data.conference_id)
+  ) {
+    return data.visitor_data.conference_id
+  }
+
+  const conferenceName = data.conference_name || 'TNGSS Visitor'
+  return PASS_TYPE_ID_MAP[conferenceName] || PASS_TYPE_ID_MAP['TNGSS Visitor']
+}
 
 // Value mapping dictionaries
 const ORGANISATION_TYPE_MAP: Record<string, string> = {
@@ -183,6 +206,8 @@ const transformAttendee = (data) => {
     // Pass Information
     pass_id: data.pass_id,
     pass_type: data.conference_name || 'TNGSS Visitor',
+    pass_type_id: getPassTypeId(data),
+    upgrade: data.upgrade || false,
 
     // Personal Information
     name: pass.name || data.name,
@@ -350,6 +375,7 @@ export const createAttendeePass: PayloadHandler = async (req) => {
         id: passToUpgrade.id,
         data: {
           pass_type: transformedData.pass_type,
+          pass_type_id: transformedData.pass_type_id,
           upgrade: true,
 
           // Update pass_id to the new one
@@ -563,6 +589,7 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
             id: passToUpgrade.id,
             data: {
               pass_type: transformedData.pass_type,
+              pass_type_id: transformedData.pass_type_id,
               pass_id: transformedData.pass_id,
               name: transformedData.name || passToUpgrade.name,
               mobile: transformedData.mobile || passToUpgrade.mobile,

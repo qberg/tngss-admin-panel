@@ -4,7 +4,7 @@ echo "=== PAYLOAD DEPLOYMENT (INTERACTIVE) ==="
 echo "Starting deployment at $(date)"
 
 # Configuration
-SERVER_IP="43.205.216.247" # Replace with your actual server IP
+SERVER_IP="3.109.185.222" # Replace with your actual server IP
 SERVER_USER="ubuntu"
 SSH_KEY="$HOME/.ssh/tngss_pem.pem" # Replace with your actual SSH key path
 SERVER_PATH="/opt/payload-app"

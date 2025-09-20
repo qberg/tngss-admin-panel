@@ -19,7 +19,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ eventI
       return NextResponse.json({ error: 'API configuration error' }, { status: 500 })
     }
 
-    const externalApiUrl = `https://tngss.startuptn.in/event-service/v2/event/user-registrations/list?event_id=${eventId}`
+    const externalApiUrl = `https://tngss.startuptn.in/event-service/v2/event/user-registrations/list_new?event_id=${eventId}`
 
     console.log(`[API] Fetching registrations for event: ${eventId}`)
 

@@ -65,48 +65,11 @@ export const HomeAppPage: GlobalConfig = {
 
             {
               name: 'internal_route',
-              type: 'select',
+              type: 'text',
               label: 'Internal Route',
-              options: [
-                {
-                  label: 'Events',
-                  value: 'events',
-                },
-                {
-                  label: 'Speakers',
-                  value: 'SpeakerList',
-                },
-                {
-                  label: 'Profile',
-                  value: 'profile',
-                },
-                {
-                  label: 'Exhibition Stalls',
-                  value: 'exhibition_stalls',
-                },
-                {
-                  label: 'Product Launch',
-                  value: 'product_launch',
-                },
-                {
-                  label: 'Schedule Meeting',
-                  value: 'schedule_meeting',
-                },
-              ],
               admin: {
                 condition: (_, siblingData) => siblingData?.type === 'internal',
                 description: 'Select which screen to navigate to within the app',
-              },
-            },
-
-            {
-              name: 'route_params',
-              type: 'json',
-              label: 'Route Parameters',
-              admin: {
-                condition: (_, siblingData) => siblingData?.type === 'internal',
-                description:
-                  'Optional parameters to pass to the route (JSON format). Example: {"productId": "123", "category": "electronics"}',
               },
             },
 
