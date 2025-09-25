@@ -21,4 +21,12 @@ const CardTitle: React.FC<WrapperProps> = ({ children, className }) => {
   )
 }
 
-export { FullWidthCardWrapper, CardTitle }
+const CardRow: React.FC<WrapperProps> =({children, className}) => {
+  return (
+  <div className={`${className} flex justify-between`}>
+      {children}
+  </div>
+  )
+}
+
+export { FullWidthCardWrapper, CardTitle, CardRow }

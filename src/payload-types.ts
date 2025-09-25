@@ -146,6 +146,7 @@ export interface Config {
     'home-app': HomeApp;
     'featured-content-app': FeaturedContentApp;
     'about-tngss-app': AboutTngssApp;
+    'media-form-wp': MediaFormWp;
   };
   globalsSelect: {
     'home-wp': HomeWpSelect<false> | HomeWpSelect<true>;
@@ -160,6 +161,7 @@ export interface Config {
     'home-app': HomeAppSelect<false> | HomeAppSelect<true>;
     'featured-content-app': FeaturedContentAppSelect<false> | FeaturedContentAppSelect<true>;
     'about-tngss-app': AboutTngssAppSelect<false> | AboutTngssAppSelect<true>;
+    'media-form-wp': MediaFormWpSelect<false> | MediaFormWpSelect<true>;
   };
   locale: null;
   user: User & {
@@ -967,6 +969,7 @@ export interface AppVersion {
   id: string;
   isCurrentVersion?: boolean | null;
   version: string;
+  android_version: string;
   platform: 'ios' | 'android' | 'universal';
   updateType: 'optional' | 'recommended' | 'force';
   /**
@@ -2163,6 +2166,7 @@ export interface DocumentsSelect<T extends boolean = true> {
 export interface AppVersionsSelect<T extends boolean = true> {
   isCurrentVersion?: T;
   version?: T;
+  android_version?: T;
   platform?: T;
   updateType?: T;
   minimumSupportedVersion?: T;
@@ -3016,6 +3020,85 @@ export interface HomeApp {
         id?: string | null;
       }[]
     | null;
+  sponsors_and_partners?:
+    | {
+        image?: (string | null) | Media;
+        bg_image?: (string | null) | Media;
+        /**
+         * Configure what happens when user clicks this banner
+         */
+        click_action?: {
+          /**
+           * Choose whether to navigate to an internal app screen or external website
+           */
+          type?: ('none' | 'internal' | 'external') | null;
+          /**
+           * Select which screen to navigate to within the app
+           */
+          internal_route?: string | null;
+          /**
+           * Enter the full URL (must start with http:// or https://)
+           */
+          external_url?: string | null;
+          /**
+           * Check this to open the URL in the device default browser instead of in-app browser
+           */
+          open_in_browser?: boolean | null;
+        };
+        image_url?: string | null;
+        image_filename?: string | null;
+        bg_image_url?: string | null;
+        bg_image_filename?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  showcases?:
+    | {
+        image?: (string | null) | Media;
+        bg_image?: (string | null) | Media;
+        /**
+         * Configure what happens when user clicks this banner
+         */
+        click_action?: {
+          /**
+           * Choose whether to navigate to an internal app screen or external website
+           */
+          type?: ('none' | 'internal' | 'external') | null;
+          /**
+           * Select which screen to navigate to within the app
+           */
+          internal_route?: string | null;
+          /**
+           * Enter the full URL (must start with http:// or https://)
+           */
+          external_url?: string | null;
+          /**
+           * Check this to open the URL in the device default browser instead of in-app browser
+           */
+          open_in_browser?: boolean | null;
+        };
+        image_url?: string | null;
+        image_filename?: string | null;
+        bg_image_url?: string | null;
+        bg_image_filename?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  special_events?:
+    | {
+        image?: (string | null) | Media;
+        bg_image?: (string | null) | Media;
+        format?: (string | null) | EventFormat;
+        format_id?: string | null;
+        format_name?: string | null;
+        format_slug?: string | null;
+        image_url?: string | null;
+        image_filename?: string | null;
+        bg_image_url?: string | null;
+        bg_image_filename?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Enable to include this item in lists, filters, or dropdowns.
    */
@@ -3192,6 +3275,18 @@ export interface AboutTngssApp {
     cta_label?: string | null;
     cta_url?: string | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-form-wp".
+ */
+export interface MediaFormWp {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  form?: (string | null) | Form;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3743,6 +3838,59 @@ export interface HomeAppSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  sponsors_and_partners?:
+    | T
+    | {
+        image?: T;
+        bg_image?: T;
+        click_action?:
+          | T
+          | {
+              type?: T;
+              internal_route?: T;
+              external_url?: T;
+              open_in_browser?: T;
+            };
+        image_url?: T;
+        image_filename?: T;
+        bg_image_url?: T;
+        bg_image_filename?: T;
+        id?: T;
+      };
+  showcases?:
+    | T
+    | {
+        image?: T;
+        bg_image?: T;
+        click_action?:
+          | T
+          | {
+              type?: T;
+              internal_route?: T;
+              external_url?: T;
+              open_in_browser?: T;
+            };
+        image_url?: T;
+        image_filename?: T;
+        bg_image_url?: T;
+        bg_image_filename?: T;
+        id?: T;
+      };
+  special_events?:
+    | T
+    | {
+        image?: T;
+        bg_image?: T;
+        format?: T;
+        format_id?: T;
+        format_name?: T;
+        format_slug?: T;
+        image_url?: T;
+        image_filename?: T;
+        bg_image_url?: T;
+        bg_image_filename?: T;
+        id?: T;
+      };
   isActive?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -3858,6 +4006,18 @@ export interface AboutTngssAppSelect<T extends boolean = true> {
         cta_label?: T;
         cta_url?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-form-wp_select".
+ */
+export interface MediaFormWpSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  form?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

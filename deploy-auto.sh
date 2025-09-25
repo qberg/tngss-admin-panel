@@ -62,7 +62,7 @@ echo -e "${GREEN}[OK] Static assets copied${NC}"
 
 echo -e "${YELLOW}>> Step 5: Restarting PM2 process...${NC}"
 ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_IP" "cd $SERVER_PATH && PATH=$NODE_PATH:\$PATH $PM2_CMD restart payload-app" ||
-	ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_IP" "cd $SERVER_PATH && PATH=$NODE_PATH:\$PATH $PM2_CMD start ecosystem.config.js"
+	ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_IP" "cd $SERVER_PATH && PATH=$NODE_PATH:\$PATH $PM2_CMD start ecosystem.config.cjs"
 echo -e "${GREEN}[OK] PM2 process restarted${NC}"
 
 echo -e "${BLUE}>> Step 6: Checking deployment status...${NC}"

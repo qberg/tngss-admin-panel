@@ -1,7 +1,7 @@
 import { Event } from '@/payload-types'
 import { TimeRange } from '../types'
 
-const calculateTimeRangeFromEvents = (events: Event[]): TimeRange => {
+const calculateTimeRangeFromEvents = (events: any[]): TimeRange => {
   if (events.length === 0) {
     return {
       earliest: '',

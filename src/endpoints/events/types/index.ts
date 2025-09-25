@@ -41,6 +41,11 @@ export interface ZoneOption {
   name?: string
 }
 
+export interface ResponseOption {
+  slug?: string | null | undefined
+  name?: string | null | undefined
+}
+
 export interface TimeRange {
   earliest: string
   latest: string

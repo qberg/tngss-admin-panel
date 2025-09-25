@@ -162,6 +162,10 @@ const formatEventForList = (event: Event) => {
               ? {
                   id: speaker.speaker?.id,
                   name: speaker.speaker?.name,
+                  designation: speaker.speaker?.designation,
+                  organization: speaker.speaker?.organization,
+                  slug: speaker.speaker?.slug,
+                  profile_image: speaker.speaker?.profile_image,
                 }
               : null,
           )

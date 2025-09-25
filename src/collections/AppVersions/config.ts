@@ -38,7 +38,19 @@ export const AppVersions: CollectionConfig = {
           type: 'text',
           required: true,
           unique: true,
-          label: 'Version',
+          label: 'IOS Version',
+          admin: {
+            width: '50%',
+            placeholder: '1.2',
+          },
+        },
+        {
+          name: 'android_version',
+          type: 'text',
+          required: true,
+          unique: true,
+          defaultValue: '1.0',
+          label: 'Android Version',
           admin: {
             width: '50%',
             placeholder: '1.2',

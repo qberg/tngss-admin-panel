@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { CardTitle, FullWidthCardWrapper } from '@/components/layout/Wrappers'
+import { CardRow, CardTitle, FullWidthCardWrapper } from '@/components/layout/Wrappers'
 import { useDocumentInfo } from '@payloadcms/ui'
 import { ExternalAPIResponseWithMeta, ExternalRegistrationData } from '@/types/events'
 import { StatCard } from '@/components/ui/StatCard'
@@ -100,6 +100,54 @@ const Registrations = () => {
     }
   }
 
+  const downloadCSV = () => {
+    if (registrations.length === 0) {
+      console.warn('No registrations to download')
+      return
+    }
+
+    const allKeys = new Set<string>()
+    registrations.forEach((registration) => {
+      Object.keys(registration).forEach((key) => allKeys.add(key))
+    })
+
+    const headers = Array.from(allKeys)
+
+    const csvContent = [
+      headers.join(','),
+      ...registrations.map((registration) =>
+        headers
+          .map((header) => {
+            const value = registration[header as keyof ExternalRegistrationData]
+            if (
+              typeof value === 'string' &&
+              (value.includes(',') || value.includes('"') || value.includes('\n'))
+            ) {
+              return `"${value.replace(/"/g, '""')}"`
+            }
+            return value || ''
+          })
+          .join(','),
+      ),
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute(
+        'download',
+        `event-${eventId}-registrations-${new Date().toISOString().split('T')[0]}.csv`,
+      )
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+  }
+
   if (registrations.length === 0) {
     return (
       <FullWidthCardWrapper>
@@ -122,7 +170,24 @@ const Registrations = () => {
     <div className="flex flex-col gap-2">
       {/*header card*/}
       <FullWidthCardWrapper>
-        <CardTitle>Event Approvals</CardTitle>
+        <CardRow>
+          <CardTitle>Event Approvals</CardTitle>
+          <button
+            onClick={downloadCSV}
+            disabled={loading}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            {loading ? 'Loading...' : 'Download CSV'}
+          </button>
+        </CardRow>
 
         <StatsWrapper>
           <StatsHeader>Registration Overview</StatsHeader>

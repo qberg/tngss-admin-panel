@@ -13,6 +13,7 @@ import { softDeleteField } from '@/fields/softDelete'
 import { readNonDeleted } from '../Users/access/softDelete'
 import { getMainEventsFilters } from '@/endpoints/events/mainEventsFilters'
 import { getMainEventsList } from '@/endpoints/events/mainEventList'
+import { getAllEventsFilters } from '@/endpoints/events/allFilters'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -46,9 +47,14 @@ export const Events: CollectionConfig = {
       handler: getEventsFilters,
     },
     {
-      path: '/main_events/filters',
+      path: '/main_events/dynamic_filters',
       method: 'get',
       handler: getMainEventsFilters,
+    },
+    {
+      path: '/main_events/filters',
+      method: 'get',
+      handler: getAllEventsFilters,
     },
     {
       path: '/main_events/list',

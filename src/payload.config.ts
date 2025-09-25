@@ -44,6 +44,7 @@ import { customBeforeEmail } from './emails/beforeEmailHandler'
 import { NetworkingSessions } from './collections/NetworkingSessions/config'
 import { OrganisationRoles } from './collections/OrganisationRoles/config'
 import { getSectors } from './endpoints/sectors'
+import { PressAndMediaFormWebPage } from './globals/PressAndMediaFormWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -122,6 +123,7 @@ export default buildConfig({
     HomeAppPage,
     FeaturedContentApp,
     AboutTNGSSApp,
+    PressAndMediaFormWebPage,
   ],
   collections: [
     Speakers,

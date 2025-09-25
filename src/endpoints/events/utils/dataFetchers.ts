@@ -27,17 +27,10 @@ const getAllDatesAndZones = async (
     ),
   ]
 
-  const zoneSlugs = [
-    ...new Set(
-      allEvents.docs.map((event) => {
-        const zone = event.zone
-        return typeof zone === 'object' ? zone?.slug : zone
-      }),
-    ),
-  ]
-
   let zones: ZoneOption[] = []
 
+  {
+    /* 
   if (zoneSlugs.length > 0) {
     const zonesData = await payload.find({
       collection: 'zones',
@@ -52,9 +45,36 @@ const getAllDatesAndZones = async (
       .map((zone) => ({
         slug: zone.slug,
         name: zone.name,
+        // @ts-expect-error any
+        hall: zone.hall?.name || '',
+        content: zone.description || '',
       }))
       .sort((a, b) => a.name.localeCompare(b.name))
   }
+  */
+  }
+
+  {
+    /*get all zone slugs*/
+  }
+
+  const zonesData = await payload.find({
+    collection: 'zones',
+    where: {
+      is_featured: { equals: true },
+    },
+    limit: 0,
+  })
+
+  zones = zonesData.docs
+    .map((zone) => ({
+      slug: zone.slug,
+      name: zone.name,
+      // @ts-expect-error any
+      hall: zone.hall?.name || '',
+      content: zone.description || '',
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const timeRange = calculateTimeRangeFromEvents(allEvents.docs)
 
