@@ -10,6 +10,7 @@ import { isPublic } from '@/fields/isPublic'
 import { contentManager } from '../Users/access/contentManager'
 import { softDeleteField } from '@/fields/softDelete'
 import { readNonDeleted } from '../Users/access/softDelete'
+import { getSpeakersFilters } from '@/endpoints/speakers/filters'
 
 const publicFieldAccess = {
   read: anyoneFieldAcess,
@@ -46,6 +47,14 @@ export const Speakers: CollectionConfig = {
     update: contentManager,
     delete: () => false,
   },
+
+  endpoints: [
+    {
+      path: '/filters',
+      method: 'get',
+      handler: getSpeakersFilters,
+    },
+  ],
   fields: [
     slugField,
     isPublic,
@@ -55,6 +64,7 @@ export const Speakers: CollectionConfig = {
       label: 'Speaks At',
       type: 'select',
       hasMany: true,
+      defaultValue: 'main_event',
       options: [
         { value: 'main_event', label: 'Main Event' },
         { value: 'partner_event', label: 'Partner Event' },

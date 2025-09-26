@@ -57,15 +57,6 @@ const fetchAllFilterOptions = async (payload: Payload) => {
     }),
   ])
 
-  const dates = [
-    ...new Set(
-      events.docs
-        .map((event) => event?.schedule?.from_date)
-        .filter(Boolean)
-        .map((date: string) => new Date(date).toISOString().split('T')[0]),
-    ),
-  ].sort()
-
   const formats = allFormats.docs
     .map((format) => ({
       slug: format.slug,
@@ -113,15 +104,8 @@ const fetchAllFilterOptions = async (payload: Payload) => {
     available: {
       dates: [
         { slug: 'all', name: 'All Dates' },
-        ...dates.map((date) => ({
-          slug: date,
-          name: new Date(date).toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-        })),
+        { slug: '2025-10-09', name: '09 Oct, 2025' },
+        { slug: '2025-10-10', name: '10 Oct, 2025' },
       ],
       zones: [{ slug: 'all', name: 'All Zones', hall: '', content: '' }, ...zones],
       formats: formats,
