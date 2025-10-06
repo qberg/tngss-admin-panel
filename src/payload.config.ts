@@ -45,6 +45,7 @@ import { NetworkingSessions } from './collections/NetworkingSessions/config'
 import { OrganisationRoles } from './collections/OrganisationRoles/config'
 import { getSectors } from './endpoints/sectors'
 import { PressAndMediaFormWebPage } from './globals/PressAndMediaFormWebPage/config'
+import { GlobalPavWebPage } from './globals/GlobalPavWebPage/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -145,6 +146,7 @@ export default buildConfig({
     AppVersions,
     AttendeePasses,
     OrganisationRoles,
+    GlobalPavWebPage,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

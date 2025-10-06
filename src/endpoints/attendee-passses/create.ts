@@ -9,6 +9,7 @@ const AttendeeSchema = z.object({
   visitor_id: z.string().min(1),
   conference_name: z.string().min(1),
   conference_id: z.string().optional(),
+  subconference_id: z.string().optional(),
   pass_created_at: z.string().optional(),
   gender: z.string().optional(),
   designation: z.string().optional(),
@@ -262,6 +263,7 @@ const transformAttendee = (data) => {
       pass_id: data.pass_id,
       pass_type: data.conference_name || 'TNGSS Visitor',
       pass_type_id: getPassTypeId(data),
+      sub_pass_type_id: data.subconference_id || '',
       upgrade: data.upgrade || false,
 
       // Personal Information
@@ -645,9 +647,9 @@ export const createAttendeePass: PayloadHandler = async (req) => {
 }
 
 export const createAttendeePassesBulk: PayloadHandler = async (req) => {
-  const requestId = `bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  const requestId = `req_${Date.now()}_${Math.random()}`
   const startTime = Date.now()
-  console.log(`API_BULK_START: ${requestId} - Bulk pass creation`)
+  console.log(`API_BULK_START: ${requestId} - Bulk pass creation with email/pass_id upsert logic`)
 
   try {
     // 1. Validate API token
@@ -669,7 +671,7 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
       )
     }
 
-    // 2. Stricter rate limiting for bulk operations
+    // 2. Rate limiting for bulk operations
     const token =
       req.headers.get('authorization')?.replace('Bearer ', '') || req.headers.get('x-api-key')
     const tokenPrefix = token ? token.substring(0, 8) + '...' : 'unknown'
@@ -685,7 +687,7 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
         {
           success: false,
           error: 'Rate limit exceeded',
-          message: 'Bulk operation rate limit exceeded. Try again later.',
+          message: 'Too many requests. Try again later.',
         },
         {
           status: 429,
@@ -719,9 +721,11 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
     }
 
     const attendeeCount = result.data.attendees.length
-    console.log(`${requestId}: Processing ${attendeeCount} attendees`)
+    console.log(
+      `${requestId}: Processing ${attendeeCount} attendees with email/pass_id upsert logic`,
+    )
 
-    // Limit bulk size for security
+    // Limit bulk size
     if (attendeeCount > 50) {
       const duration = Date.now() - startTime
       console.log(
@@ -740,130 +744,119 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
       )
     }
 
-    const created = []
-    const upgraded = []
+    // Track results
+    let createdCount = 0
+    let updatedCount = 0
     const errors = []
     let processedCount = 0
 
-    // Process each attendee with proper transformation and upgrade logic
+    // Process each attendee with upsert logic
     for (const attendee of result.data.attendees) {
       processedCount++
       const itemId = `${requestId}_item_${processedCount}`
 
       try {
-        const isUpgrade = attendee.upgrade === true
+        const email = attendee.email.toLowerCase()
+        const passId = attendee.pass_id
+
         console.log(
-          `${itemId}: Processing attendee ${processedCount}/${attendeeCount} - passId: ${attendee.pass_id}, email: ${attendee.email}, upgrade: ${isUpgrade}`,
+          `${itemId}: Processing ${processedCount}/${attendeeCount} - email: ${email}, passId: ${passId}`,
         )
 
-        if (isUpgrade) {
-          // UPGRADE LOGIC
-          const existingPasses = await req.payload.find({
+        // Check if email OR pass_id already exists
+        const existingByEmail = await req.payload.find({
+          collection: 'attendee-passes',
+          where: {
+            email: { equals: email },
+          },
+          limit: 1,
+        })
+
+        const existingByPassId = await req.payload.find({
+          collection: 'attendee-passes',
+          where: {
+            pass_id: { equals: passId },
+          },
+          limit: 1,
+        })
+
+        const transformedData = transformAttendee(attendee)
+
+        // Determine which record to update (prefer pass_id match, fallback to email match)
+        let existingRecord = null
+        let matchedBy = null
+
+        if (existingByPassId.totalDocs > 0) {
+          existingRecord = existingByPassId.docs[0]
+          matchedBy = 'pass_id'
+          console.log(`${itemId}: Found existing record by pass_id: ${passId}`)
+        } else if (existingByEmail.totalDocs > 0) {
+          existingRecord = existingByEmail.docs[0]
+          matchedBy = 'email'
+          console.log(`${itemId}: Found existing record by email: ${email}`)
+        }
+
+        if (existingRecord) {
+          // UPDATE EXISTING RECORD
+          const oldPassId = existingRecord.pass_id
+          const oldEmail = existingRecord.email
+          const oldPassType = existingRecord.pass_type
+
+          console.log(`${itemId}: Updating existing record (matched by: ${matchedBy})`)
+
+          await req.payload.update({
             collection: 'attendee-passes',
-            where: {
-              email: { equals: attendee.email.toLowerCase() },
-            },
-            limit: 1,
-          })
-
-          console.log(`${itemId}: Found ${existingPasses.totalDocs} existing passes for upgrade`)
-
-          if (existingPasses.totalDocs === 0) {
-            console.log(`${itemId}: No existing pass found for upgrade`)
-            errors.push({
-              pass_id: attendee.pass_id,
-              email: attendee.email,
-              error: 'No existing pass found for upgrade',
-            })
-            continue
-          }
-
-          const transformedData = transformAttendee(attendee)
-          const passToUpgrade = existingPasses.docs[0]
-          const oldPassType = passToUpgrade.pass_type
-
-          console.log(
-            `${itemId}: Upgrading pass from ${oldPassType} to ${transformedData.pass_type}`,
-          )
-
-          const upgradedPass = await req.payload.update({
-            collection: 'attendee-passes',
-            id: passToUpgrade.id,
+            id: existingRecord.id,
+            // @ts-expect-error any
             data: {
-              pass_type: transformedData.pass_type,
-              pass_type_id: transformedData.pass_type_id,
-              pass_id: transformedData.pass_id,
-              name: transformedData.name || passToUpgrade.name,
-              mobile: transformedData.mobile || passToUpgrade.mobile,
-              designation: transformedData.designation || passToUpgrade.designation,
-              organisation: transformedData.organisation || passToUpgrade.organisation,
-              migration_notes: passToUpgrade.migration_notes
-                ? `${passToUpgrade.migration_notes}; BULK UPGRADED: ${oldPassType} → ${transformedData.pass_type} (${new Date().toISOString()})`
-                : `BULK UPGRADED: ${oldPassType} → ${transformedData.pass_type} (${new Date().toISOString()})`,
+              ...transformedData,
+              // Preserve check-in data if it exists
+              checked_in: existingRecord.checked_in || transformedData.checked_in,
+              checkin_data: existingRecord.checkin_data || transformedData.checkin_data,
+              // Add detailed migration note
+              migration_notes: existingRecord.migration_notes
+                ? `${existingRecord.migration_notes}; BULK UPSERT (${matchedBy}): pass_id ${oldPassId}→${transformedData.pass_id}, email ${oldEmail}→${transformedData.email}, type ${oldPassType}→${transformedData.pass_type} (${new Date().toISOString()})`
+                : `BULK UPSERT (${matchedBy}): pass_id ${oldPassId}→${transformedData.pass_id}, email ${oldEmail}→${transformedData.email}, type ${oldPassType}→${transformedData.pass_type} (${new Date().toISOString()})`,
             },
             overrideAccess: true,
           })
 
-          console.log(`${itemId}: Successfully upgraded pass`)
-          upgraded.push({
-            pass_id: upgradedPass.pass_id,
-            email: upgradedPass.email,
-            name: upgradedPass.name,
-            old_pass_type: oldPassType,
-            new_pass_type: upgradedPass.pass_type,
-          })
+          console.log(`${itemId}: Successfully updated record`)
+          updatedCount++
         } else {
-          // NORMAL CREATION LOGIC
-          console.log(`${itemId}: Checking for duplicate pass`)
-          const existing = await req.payload.find({
-            collection: 'attendee-passes',
-            where: { pass_id: { equals: attendee.pass_id } },
-            limit: 1,
-          })
+          // CREATE NEW RECORD
+          console.log(`${itemId}: No existing record found - creating new pass`)
 
-          if (existing.totalDocs > 0) {
-            console.log(`${itemId}: Pass already exists`)
-            errors.push({ pass_id: attendee.pass_id, error: 'Already exists' })
-            continue
-          }
-
-          console.log(`${itemId}: Creating new pass`)
-          const transformedData = transformAttendee(attendee)
-
-          const newAttendee = await req.payload.create({
+          await req.payload.create({
             collection: 'attendee-passes',
             // @ts-expect-error any
             data: transformedData,
             overrideAccess: true,
           })
 
-          console.log(`${itemId}: Successfully created pass`)
-          created.push({
-            pass_id: newAttendee.pass_id,
-            name: newAttendee.name,
-            migration_notes: transformedData.migration_notes || undefined,
-          })
+          console.log(`${itemId}: Successfully created new pass`)
+          createdCount++
         }
       } catch (error) {
         console.error(`${itemId}: Processing failed, error:`, error)
         errors.push({
           pass_id: attendee.pass_id,
           email: attendee.email,
-          // @ts-expect-error not yet
+          // @ts-expect-error any
           error: error.message || 'Processing failed',
         })
       }
     }
 
     const duration = Date.now() - startTime
-    const successCount = created.length + upgraded.length
-    const totalProcessed = created.length + upgraded.length + errors.length
+    const successCount = createdCount + updatedCount
+    const totalProcessed = createdCount + updatedCount + errors.length
 
     console.log(
       `API_BULK_COMPLETE: ${requestId} - Processed ${totalProcessed}/${attendeeCount} in ${duration}ms`,
     )
     console.log(
-      `API_BULK_STATS: ${requestId} - Created: ${created.length}, Upgraded: ${upgraded.length}, Errors: ${errors.length}, Token: ${tokenPrefix}`,
+      `API_BULK_STATS: ${requestId} - Created: ${createdCount}, Updated: ${updatedCount}, Errors: ${errors.length}, Token: ${tokenPrefix}`,
     )
 
     // Log detailed error summary if there are errors
@@ -878,29 +871,28 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
       console.log(`API_BULK_ERROR_SUMMARY: ${requestId}`, errorSummary)
     }
 
-    // Log migration notes summary
-    const migrationsCount = created.filter((c) => c.migration_notes).length
-    if (migrationsCount > 0) {
-      console.log(
-        `API_BULK_MIGRATIONS: ${requestId} - ${migrationsCount}/${created.length} created passes had data migrations`,
-      )
-    }
-
+    // Return minimal response
     return Response.json(
       {
         success: successCount > 0,
-        message: `Created: ${created.length}, Upgraded: ${upgraded.length}, Failed: ${errors.length}`,
-        data: {
-          created,
-          upgraded,
-          errors,
+        summary: {
+          created: createdCount,
+          updated: updatedCount,
+          failed: errors.length,
           total: attendeeCount,
-          processed: totalProcessed,
           duration_ms: duration,
         },
+        // Only include errors if any exist
+        ...(errors.length > 0 && {
+          errors: errors.map((e) => ({
+            pass_id: e.pass_id,
+            email: e.email,
+            error: e.error,
+          })),
+        }),
       },
       {
-        status: errors.length > 0 ? 207 : upgraded.length > 0 ? 200 : 201,
+        status: errors.length > 0 ? 207 : 200,
         headers: headersWithCors({ headers: new Headers(), req }),
       },
     )
@@ -911,7 +903,6 @@ export const createAttendeePassesBulk: PayloadHandler = async (req) => {
       {
         success: false,
         error: 'Internal server error',
-        duration_ms: duration,
       },
       {
         status: 500,

@@ -86,6 +86,7 @@ export interface Config {
     'app-versions': AppVersion;
     'attendee-passes': AttendeePass;
     organisation_roles: OrganisationRole;
+    'global-wp': GlobalWp;
     exports: Export;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -122,6 +123,7 @@ export interface Config {
     'app-versions': AppVersionsSelect<false> | AppVersionsSelect<true>;
     'attendee-passes': AttendeePassesSelect<false> | AttendeePassesSelect<true>;
     organisation_roles: OrganisationRolesSelect<false> | OrganisationRolesSelect<true>;
+    'global-wp': GlobalWpSelect<false> | GlobalWpSelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -998,11 +1000,15 @@ export interface AttendeePass {
    * UUID identifier for the pass type
    */
   pass_type_id: string;
+  /**
+   * UUID identifier for the sub pass type
+   */
+  sub_pass_type_id?: string | null;
   name: string;
   /**
    * Primary lookup field for app user onboarding
    */
-  email?: string | null;
+  email: string;
   /**
    * From pass_data.gender
    */
@@ -1198,6 +1204,18 @@ export interface OrganisationRole {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "global-wp".
+ */
+export interface GlobalWp {
+  id: string;
+  name?: string | null;
+  country?: string | null;
+  image?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -1601,6 +1619,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'organisation_roles';
         value: string | OrganisationRole;
+      } | null)
+    | ({
+        relationTo: 'global-wp';
+        value: string | GlobalWp;
       } | null)
     | ({
         relationTo: 'exports';
@@ -2186,6 +2208,7 @@ export interface AttendeePassesSelect<T extends boolean = true> {
   pass_id?: T;
   pass_type?: T;
   pass_type_id?: T;
+  sub_pass_type_id?: T;
   name?: T;
   email?: T;
   gender?: T;
@@ -2224,6 +2247,17 @@ export interface OrganisationRolesSelect<T extends boolean = true> {
         key?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "global-wp_select".
+ */
+export interface GlobalWpSelect<T extends boolean = true> {
+  name?: T;
+  country?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }

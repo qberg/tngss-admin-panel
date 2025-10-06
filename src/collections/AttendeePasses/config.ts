@@ -4,6 +4,12 @@ import { profileField } from '@/fields/profile'
 import { sectorsField } from '@/fields/sectors'
 import { whyAttendingField } from '@/fields/whyAttending'
 import type { CollectionConfig } from 'payload'
+const ALLOWED_EMAILS = [
+  'kishore@minsky.in',
+  'reneeth@minsky.in',
+  'jawahar@minsky.in',
+  'naveen@startuptn.in',
+]
 
 export const AttendeePasses: CollectionConfig = {
   slug: 'attendee-passes',
@@ -12,10 +18,10 @@ export const AttendeePasses: CollectionConfig = {
     plural: 'Attendee Passes',
   },
   access: {
-    create: () => true,
+    create: () => false,
     read: () => true,
-    update: () => false,
-    delete: () => false,
+    update: ({ req: { user } }) => ALLOWED_EMAILS.includes(user?.email || ''),
+    delete: ({ req: { user } }) => ALLOWED_EMAILS.includes(user?.email || ''),
   },
   admin: {
     useAsTitle: 'name',
@@ -66,26 +72,34 @@ export const AttendeePasses: CollectionConfig = {
       required: true,
       index: true,
       admin: {
-        description: 'UUID identifier for the pass type',
         readOnly: true,
+        description: 'UUID identifier for the pass type',
       },
     },
+
+    {
+      name: 'sub_pass_type_id',
+      type: 'text',
+      label: 'Sub Pass Type ID',
+      admin: {
+        description: 'UUID identifier for the sub pass type',
+      },
+    },
+
     //pass_data
     {
       name: 'name',
       type: 'text',
       required: true,
-      admin: {
-        readOnly: true,
-      },
+      admin: {},
     },
 
     {
       name: 'email',
       type: 'email',
+      required: true,
       index: true,
       admin: {
-        readOnly: true,
         description: 'Primary lookup field for app user onboarding',
       },
     },
@@ -95,7 +109,6 @@ export const AttendeePasses: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'From pass_data.gender',
-        readOnly: true,
       },
     },
 
@@ -103,16 +116,12 @@ export const AttendeePasses: CollectionConfig = {
       name: 'mobile',
       type: 'text',
       required: true,
-      admin: {
-        readOnly: true,
-      },
     },
     {
       name: 'designation',
       type: 'text',
       admin: {
         description: 'Job title/role from pass_data.designation',
-        readOnly: true,
       },
     },
 
@@ -122,7 +131,6 @@ export const AttendeePasses: CollectionConfig = {
       index: true,
       admin: {
         description: 'Company/organisation from pass_data.organisation',
-        readOnly: true,
       },
     },
 
@@ -142,31 +150,21 @@ export const AttendeePasses: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Organization that made the booking',
-        readOnly: true,
       },
     },
     {
       name: 'registration_city',
       label: 'City',
       type: 'text',
-      admin: {
-        readOnly: true,
-      },
     },
     {
       name: 'registration_state',
       label: 'State',
       type: 'text',
-      admin: {
-        readOnly: true,
-      },
     },
     {
       name: 'registration_country',
       type: 'text',
-      admin: {
-        readOnly: true,
-      },
     },
     organisationField,
     profileField,
@@ -177,7 +175,6 @@ export const AttendeePasses: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Website URL from registration',
-        readOnly: true,
       },
     },
     {

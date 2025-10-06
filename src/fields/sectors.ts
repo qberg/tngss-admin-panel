@@ -9,6 +9,5 @@ export const sectorsField: Field = {
   options: SECTORS,
   admin: {
     description: 'From visitor_data.sectorInterested - sector user is interested in',
-    readOnly: true,
   },
 }

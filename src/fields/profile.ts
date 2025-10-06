@@ -65,6 +65,5 @@ export const profileField: Field = {
   index: true,
   admin: {
     description: 'From visitor_data.profileType - detailed user categorization',
-    readOnly: true,
   },
 }

@@ -19,6 +19,5 @@ export const whyAttendingField: Field = {
   ],
   admin: {
     description: 'Reason for attending from registration',
-    readOnly: true,
   },
 }
