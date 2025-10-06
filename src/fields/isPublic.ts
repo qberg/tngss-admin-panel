@@ -5,6 +5,7 @@ export const isPublic: Field = {
   type: 'checkbox',
   label: 'Publicly Visible',
   defaultValue: true,
+  index: true,
   admin: {
     position: 'sidebar',
     description:

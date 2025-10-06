@@ -70,6 +70,12 @@ export const Halls: CollectionConfig = {
     },
 
     {
+      name: 'description',
+      type: 'textarea',
+      label: 'Description',
+    },
+
+    {
       name: 'zones',
       type: 'join',
       collection: 'zones',

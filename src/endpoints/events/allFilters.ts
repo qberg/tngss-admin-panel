@@ -40,7 +40,7 @@ const fetchAllFilterOptions = async (payload: Payload) => {
     payload.find({
       collection: 'halls',
       limit: 0,
-      select: { slug: true, name: true },
+      select: { slug: true, name: true, description: true },
     }),
     payload.find({
       collection: 'zones',
@@ -76,6 +76,7 @@ const fetchAllFilterOptions = async (payload: Payload) => {
     .map((hall) => ({
       slug: hall.slug,
       name: hall.name,
+      content: hall.description || '',
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -107,10 +108,10 @@ const fetchAllFilterOptions = async (payload: Payload) => {
         { slug: '2025-10-09', name: '09 Oct, 2025' },
         { slug: '2025-10-10', name: '10 Oct, 2025' },
       ],
+      halls: [{ slug: 'all', name: 'All Halls', content: '' }, ...halls],
       zones: [{ slug: 'all', name: 'All Zones', hall: '', content: '' }, ...zones],
       formats: formats,
       tags: tags,
-      halls: halls,
       access_levels: accessLevels,
       time_range: timeRange,
     },

@@ -98,6 +98,7 @@ export const Speakers: CollectionConfig = {
               name: 'name',
               type: 'text',
               required: true,
+              index: true,
               admin: {
                 width: '50%',
               },
@@ -120,6 +121,7 @@ export const Speakers: CollectionConfig = {
             },
             {
               name: 'speaker_type',
+              index: true,
               type: 'relationship',
               relationTo: 'speaker-types',
               required: true,
@@ -147,6 +149,7 @@ export const Speakers: CollectionConfig = {
           name: 'location',
           label: 'Location',
           type: 'group',
+          index: true,
           fields: [
             {
               type: 'row',
@@ -245,6 +248,7 @@ export const Speakers: CollectionConfig = {
         },
         {
           name: 'tags',
+          index: true,
           type: 'relationship',
           hasMany: true,
           relationTo: 'tags',

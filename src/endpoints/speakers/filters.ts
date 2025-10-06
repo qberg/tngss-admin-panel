@@ -26,7 +26,9 @@ const fetchSpeakersFilters = async (payload: Payload) => {
             isPublic: { equals: true },
           },
           {
-            'speaker_type.slug': { not_equals: 'government-dignitaries' },
+            'speaker_type.slug': {
+              in: ['investor-speaker', 'domestic', 'international'],
+            },
           },
         ],
       },

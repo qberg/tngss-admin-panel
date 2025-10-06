@@ -12,7 +12,7 @@ export const AttendeePasses: CollectionConfig = {
     plural: 'Attendee Passes',
   },
   access: {
-    create: () => false,
+    create: () => true,
     read: () => true,
     update: () => false,
     delete: () => false,
@@ -85,8 +85,8 @@ export const AttendeePasses: CollectionConfig = {
       type: 'email',
       index: true,
       admin: {
-        description: 'Primary lookup field for app user onboarding',
         readOnly: true,
+        description: 'Primary lookup field for app user onboarding',
       },
     },
 
@@ -134,7 +134,6 @@ export const AttendeePasses: CollectionConfig = {
       type: 'email',
       admin: {
         description: 'Email of person who made the booking (may differ from attendee)',
-        readOnly: true,
       },
     },
     {

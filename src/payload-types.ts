@@ -760,6 +760,7 @@ export interface Hall {
    * Number of zones in this hall
    */
   zones_count?: number | null;
+  description?: string | null;
   zones?: {
     docs?: (string | Zone)[];
     hasNextPage?: boolean;
@@ -1947,6 +1948,7 @@ export interface HallsSelect<T extends boolean = true> {
   image?: T;
   slug?: T;
   zones_count?: T;
+  description?: T;
   zones?: T;
   updatedAt?: T;
   createdAt?: T;

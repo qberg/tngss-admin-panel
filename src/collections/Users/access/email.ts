@@ -1,6 +1,6 @@
 import { Access } from 'payload'
 
-const ALLOWED_EMAILS = ['kishore@minsky.in', 'reneeth@minsky.in']
+const ALLOWED_EMAILS = ['kishore@minsky.in', 'reneeth@minsky.in', 'naveen@startuptn.in']
 
 export const checkEmailAccess: Access = ({ req: { user } }) => {
   if (!user) return false
